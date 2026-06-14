@@ -214,7 +214,7 @@
                 </p>
                 <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-circle-info text-amber-600"></i>
-                    <p class="text-xs text-amber-800 text-left">Lupa Password? Silahkan hubungi <strong>Halo Murni</strong></p>
+                    <p class="text-xs text-amber-800 text-left">Lupa Password? Silahkan hubungi <a href="https://wa.me/6282187439224" target="_blank" class="font-bold underline text-emerald-800 hover:text-emerald-950">Halo Murni</a></p>
                 </div>
             </div>
         </section>
@@ -484,7 +484,7 @@
                     <label class="block text-xs text-gray-500 mb-1">Bulan</label>
                     <select id="tpg-bulan" class="w-full p-2 bg-white rounded-lg text-xs"></select>
                 </div>
-                <div><label class="block text-xs text-gray-500 mb-1">Jenis TPG</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>TPG MADRASAH</option><option>TPG PPPK</option><option>TPG PAI</option></select></div>
+                <div><label class="block text-xs text-gray-500 mb-1">Jenis TPG</label><select id="tpg-jenis" class="w-full p-2 bg-white rounded-lg text-xs"><option>TPG MADRASAH</option><option>TPG PPPK</option><option>TPG PAI</option></select></div>
             </div>
 
             <div class="space-y-6">
@@ -497,7 +497,7 @@
                         <div id="status-tpg-main" class="min-w-[150px] text-right">
                             <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-berkas-tpg', 'TPG', 'Berkas Persyaratan TPG', 'status-tpg-main')" class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
+                        <button onclick="uploadProses('input-berkas-tpg', 'TPG', 'Upload Berkas Persyaratan', 'status-tpg-main')" class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
@@ -514,7 +514,7 @@
     <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500 space-y-3">
         <div class="inline-flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-full">
             <i class="fa-brands fa-whatsapp text-emerald-600 text-lg"></i>
-            <span class="text-emerald-800 font-medium">Jika terdapat masalah silahkan klik <a href="https://wa.me/#" target="_blank" class="font-bold underline">Halo Murni</a></span>
+            <span class="text-emerald-800 font-medium">Jika terdapat masalah silahkan klik <a href="https://wa.me/6282187439224" target="_blank" class="font-bold underline">Halo Murni</a></span>
         </div>
         <p>&copy; 2026 Copyright by <strong>Murniati Rahmatullah</strong>. All Rights Reserved.</p>
     </footer>
@@ -944,12 +944,18 @@
                 'Laporan Kinerja Bulanan': 'status-lapor-bulanan',
                 'Rencana Kinerja Bulanan': 'status-rencana-bulan',
                 'Laporan Absensi Bulanan': 'status-absensi',
+                'Upload Berkas Persyaratan': 'status-tpg-main',
                 'Berkas Persyaratan TPG': 'status-tpg-main'
             };
 
             if(historyList && Array.isArray(historyList)) {
                 historyList.forEach(item => {
-                    const elementId = mapping[item.namaBerkas];
+                    let elementId = mapping[item.namaBerkas];
+                    if (!elementId && item.namaBerkas) {
+                        if (item.namaBerkas.includes('Upload Berkas Persyaratan') || item.namaBerkas.includes('Berkas Persyaratan TPG')) {
+                            elementId = 'status-tpg-main';
+                        }
+                    }
                     if (elementId) {
                         document.getElementById(elementId).innerHTML = `
                             <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
@@ -999,6 +1005,13 @@
                     fileName: file.name,
                     fileData: fileData
                 };
+
+                if (layanan === 'TPG') {
+                    const tpgJenisSelect = document.getElementById('tpg-jenis');
+                    if (tpgJenisSelect) {
+                        payload.kategori = tpgJenisSelect.value;
+                    }
+                }
 
                 try {
                     const result = await apiFetch(payload);

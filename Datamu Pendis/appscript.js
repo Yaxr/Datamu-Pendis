@@ -106,25 +106,19 @@ function handleRegister(data) {
 
   // PROSES PEMBUATAN FOLDER & PENYIMPANAN FOTO WAJAH KE DRIVE
   try {
-    let mainFolder;
-    try {
-      if (MAIN_FOLDER_ID && MAIN_FOLDER_ID.trim() !== "") {
-        mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
-      } else {
-        mainFolder = DriveApp.getRootFolder();
-      }
-    } catch (err) {
-      mainFolder = DriveApp.getRootFolder();
-    }
+    const mainFolder = getMainFolder();
+    
+    // Pola nama folder utama: Nama_NIP
+    const userFolderName = cleanNameForSheet.replace(/\s+/g, "_") + "_" + cleanNip;
+    const userFolder = getOrCreateSubfolder(mainFolder, userFolderName);
 
-    // Cari atau buat folder personal user
-    const folders = mainFolder.getFoldersByName(sheetName);
-    let targetFolder;
-    if (folders.hasNext()) {
-      targetFolder = folders.next();
-    } else {
-      targetFolder = mainFolder.createFolder(sheetName);
-    }
+    // Folder khusus foto wajah: foto_wajah_Nama_NIP
+    const fotoWajahFolderName = "foto_wajah_" + userFolderName;
+    const fotoWajahFolder = getOrCreateSubfolder(userFolder, fotoWajahFolderName);
+
+    // Folder tanggal upload
+    const dateStr = getFormattedDateOnly();
+    const dateFolder = getOrCreateSubfolder(fotoWajahFolder, dateStr);
 
     // Simpan data string base64 foto wajah ke Drive
     if (data.fotoWajah && data.fotoWajah.includes("base64,")) {
@@ -132,7 +126,7 @@ function handleRegister(data) {
       const base64Data = data.fotoWajah.substring(data.fotoWajah.indexOf(",") + 1);
       const blob = Utilities.newBlob(Utilities.base64Decode(base64Data), contentType, "Foto_Wajah_" + cleanNip + ".jpg");
 
-      const fileFoto = targetFolder.createFile(blob);
+      const fileFoto = dateFolder.createFile(blob);
       fileFoto.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       fotoUrl = fileFoto.getUrl();
     } else {
@@ -249,39 +243,47 @@ function handleFileUpload(data) {
     personalSheet.setColumnWidth(5, 100);
   }
 
-  let mainFolder;
-  try {
-    if (MAIN_FOLDER_ID && MAIN_FOLDER_ID.trim() !== "") {
-      mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
-    } else {
-      mainFolder = DriveApp.getRootFolder();
-    }
-  } catch (err) {
-    mainFolder = DriveApp.getRootFolder();
+  const mainFolder = getMainFolder();
+
+  // Pola nama folder utama: Nama_NIP
+  const parts = data.sheetName.split("-");
+  const nip = parts.pop();
+  const name = parts.join("-");
+  const userFolderName = name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "") + "_" + nip;
+  const userFolder = getOrCreateSubfolder(mainFolder, userFolderName);
+
+  // Pola nama folder layanan: Laporan_Kinerja_Nama_NIP atau TPG_Nama_NIP
+  const serviceFolderName = data.layanan.replace(/\s+/g, "_") + "_" + userFolderName;
+  const serviceFolder = getOrCreateSubfolder(userFolder, serviceFolderName);
+
+  // Folder Kategori Berkas (misal: Laporan Kinerja Harian / Upload Berkas Persyaratan)
+  let berkasFolder = getOrCreateSubfolder(serviceFolder, data.berkasType);
+
+  // TPG sesuaikan dengan kategori untuk foldernya
+  if (data.layanan === 'TPG' && data.kategori) {
+    berkasFolder = getOrCreateSubfolder(berkasFolder, data.kategori.trim());
   }
 
-  const folders = mainFolder.getFoldersByName(data.sheetName);
-  let targetFolder;
-  if (folders.hasNext()) {
-    targetFolder = folders.next();
-  } else {
-    targetFolder = mainFolder.createFolder(data.sheetName);
-  }
+  // Folder tanggal upload
+  const dateStr = getFormattedDateOnly();
+  const dateFolder = getOrCreateSubfolder(berkasFolder, dateStr);
 
   const contentType = data.fileData.substring(data.fileData.indexOf(":") + 1, data.fileData.indexOf(";"));
   const base64Data = data.fileData.substring(data.fileData.indexOf(",") + 1);
   const blob = Utilities.newBlob(Utilities.base64Decode(base64Data), contentType, data.fileName);
 
-  const file = targetFolder.createFile(blob);
+  const file = dateFolder.createFile(blob);
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   const fileUrl = file.getUrl();
 
   const formattedDate = Utilities.formatDate(new Date(), "GMT+8", "yyyy-MM-dd HH:mm:ss");
 
+  const namaBerkasDisimpan = data.berkasType + (data.layanan === 'TPG' && data.kategori ? " (" + data.kategori + ")" : "");
+
   personalSheet.appendRow([
     formattedDate,
     data.layanan,
-    data.berkasType,
+    namaBerkasDisimpan,
     fileUrl,
     "Sukses"
   ]);
@@ -336,4 +338,34 @@ function handleGetHistory(data) {
 function createResponse(object) {
   return ContentService.createTextOutput(JSON.stringify(object))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ==========================================
+//  HELPER: UTILITIES & DRIVE DIRECTORIES
+// ==========================================
+function getOrCreateSubfolder(parentFolder, name) {
+  const folders = parentFolder.getFoldersByName(name);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return parentFolder.createFolder(name);
+  }
+}
+
+function getMainFolder() {
+  let mainFolder;
+  try {
+    if (MAIN_FOLDER_ID && MAIN_FOLDER_ID.trim() !== "") {
+      mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
+    } else {
+      mainFolder = DriveApp.getRootFolder();
+    }
+  } catch (err) {
+    mainFolder = DriveApp.getRootFolder();
+  }
+  return mainFolder;
+}
+
+function getFormattedDateOnly() {
+  return Utilities.formatDate(new Date(), "GMT+8", "yyyy-MM-dd");
 }
