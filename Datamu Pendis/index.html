@@ -366,6 +366,7 @@
         }
 
         // AKSI REGISTRASI KE SPREADSHEET
+        // CARI KODE INI PADA Halaman REGISTER DI index.html ANDA, LALU GANTI:
         async function handleRegisterSubmit(e) {
             e.preventDefault();
             const nama = document.getElementById('reg-nama').value;
@@ -382,22 +383,25 @@
 
             toggleLoader(true, "Mendaftarkan akun & membuat Cloud Sheet Anda...");
 
+            // Perubahan penanganan bypass CORS khusus Google Apps Script via URLSearchParams
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
+                    mode: 'no-cors', // <--- PENTING: Mengabaikan aturan CORS untuk Google Apps Script
+                    headers: {
+                        'Content-Type': 'text/plain' // Menggunakan text/plain agar tidak memicu preflight CORS
+                    },
                     body: JSON.stringify({ action: 'register', nama, hp, email, nip, password: pass })
                 });
-                const result = await response.json();
 
-                if (result.status === "SUCCESS") {
-                    alert('Registrasi Berhasil! Sheet data Pribadi Anda telah dibuat di database.');
-                    document.getElementById('page-register').querySelector('form').reset();
-                    navigateTo('page-login');
-                } else {
-                    alert(result.message);
-                }
+                // Catatan: Saat menggunakan mode 'no-cors', browser tidak dapat membaca isi JSON response (opaque).
+                // Jadi kita asumsikan proses berhasil jika tidak melempar error jaringan.
+                alert('Permintaan registrasi telah dikirim ke sistem! Silahkan coba login.');
+                document.getElementById('page-register').querySelector('form').reset();
+                navigateTo('page-login');
+
             } catch (error) {
-                alert('Terjadi kesalahan jaringan atau skrip API salah.');
+                alert('Terjadi kendala saat menghubungkan ke server Google.');
                 console.error(error);
             } finally {
                 toggleLoader(false);
