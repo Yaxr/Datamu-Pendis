@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard Analisis Sentimen Cicil Emas — Tring by Pegadaian. Visualisasi interaktif ulasan Google Play Store menggunakan model BiLSTM Deep Learning.">
+  <title>Dashboard Sentimen — Cicil Emas | Tring by Pegadaian</title>
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Memuat data dashboard…</div>
+  </div>
+
+  <div class="dashboard-container">
+
+    <!-- ════════════════════════════════════════════
+         HERO HEADER
+         ════════════════════════════════════════════ -->
+    <header class="hero animate-in">
+      <div class="hero__badge">
+        <i data-lucide="sparkles"></i>
+        Deep Learning BiLSTM Analysis
+      </div>
+      <h1 class="hero__title">Dashboard Analisis Sentimen<br>Cicil Emas</h1>
+      <p class="hero__subtitle">
+        Visualisasi interaktif ulasan <strong>Tring by Pegadaian</strong> dari Google Play Store — Tahun 2026
+      </p>
+    </header>
+
+    <!-- ════════════════════════════════════════════
+         STAT CARDS
+         ════════════════════════════════════════════ -->
+    <div class="stats-grid">
+      <div class="stat-card animate-in delay-1">
+        <div class="stat-card__icon stat-card__icon--gold">
+          <i data-lucide="bar-chart-3"></i>
+        </div>
+        <div class="stat-card__info">
+          <div class="stat-card__label">Total Ulasan</div>
+          <div class="stat-card__value" id="statTotal">0</div>
+          <div class="stat-card__sub" id="statTotalSub">Memuat…</div>
+        </div>
+      </div>
+
+      <div class="stat-card animate-in delay-2">
+        <div class="stat-card__icon stat-card__icon--green">
+          <i data-lucide="thumbs-up"></i>
+        </div>
+        <div class="stat-card__info">
+          <div class="stat-card__label">Positif</div>
+          <div class="stat-card__value" id="statPositif">0</div>
+          <div class="stat-card__sub" id="statPositifSub">Memuat…</div>
+        </div>
+      </div>
+
+      <div class="stat-card animate-in delay-3">
+        <div class="stat-card__icon stat-card__icon--red">
+          <i data-lucide="thumbs-down"></i>
+        </div>
+        <div class="stat-card__info">
+          <div class="stat-card__label">Negatif</div>
+          <div class="stat-card__value" id="statNegatif">0</div>
+          <div class="stat-card__sub" id="statNegatifSub">Memuat…</div>
+        </div>
+      </div>
+
+      <div class="stat-card animate-in delay-4">
+        <div class="stat-card__icon stat-card__icon--blue">
+          <i data-lucide="layers"></i>
+        </div>
+        <div class="stat-card__info">
+          <div class="stat-card__label">Aspek Bisnis</div>
+          <div class="stat-card__value" id="statAspek">0</div>
+          <div class="stat-card__sub" id="statAspekSub">Memuat…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         FILTER BAR
+         ════════════════════════════════════════════ -->
+    <div class="filter-bar animate-in delay-3">
+      <div class="filter-bar__label">
+        <i data-lucide="sliders-horizontal"></i>
+        Filter
+      </div>
+
+      <div class="filter-group">
+        <label for="filterAspek">Aspek:</label>
+        <select id="filterAspek" class="filter-select">
+          <option value="">Semua Aspek</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterDateFrom">Dari:</label>
+        <input type="date" id="filterDateFrom" class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <label for="filterDateTo">Sampai:</label>
+        <input type="date" id="filterDateTo" class="filter-input">
+      </div>
+
+      <button class="btn-reset" id="btnReset">
+        <i data-lucide="rotate-ccw"></i>
+        Reset
+      </button>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         SECTION: OVERVIEW CHARTS
+         ════════════════════════════════════════════ -->
+    <div class="animate-on-scroll">
+      <div class="section-header">
+        <div class="section-header__icon"><i data-lucide="pie-chart"></i></div>
+        <h2 class="section-header__title">Overview Sentimen</h2>
+        <span class="section-header__sub">Distribusi & perbandingan per aspek</span>
+      </div>
+
+      <div class="charts-grid-2">
+        <div class="glass-card">
+          <div class="glass-card__title">
+            <i data-lucide="circle-dot"></i>
+            Proporsi Sentimen
+          </div>
+          <div class="chart-wrapper" style="position: relative; max-width: 360px; margin: 0 auto;">
+            <canvas id="donutChart"></canvas>
+            <div class="donut-center-label">
+              <div class="value">0%</div>
+              <div class="label">Positif</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="glass-card__title">
+            <i data-lucide="bar-chart-2"></i>
+            Ulasan per Aspek Bisnis
+          </div>
+          <div class="chart-wrapper" style="height: 340px;">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         SECTION: TREND ANALYSIS
+         ════════════════════════════════════════════ -->
+    <div class="animate-on-scroll">
+      <div class="section-header">
+        <div class="section-header__icon"><i data-lucide="trending-up"></i></div>
+        <h2 class="section-header__title">Tren Sentimen Harian</h2>
+        <span class="section-header__sub">Pergerakan sentimen dari waktu ke waktu</span>
+      </div>
+
+      <div class="glass-card chart-full">
+        <div class="glass-card__title">
+          <i data-lucide="activity"></i>
+          Timeline Sentimen (Positif vs Negatif)
+        </div>
+        <div class="chart-wrapper" style="height: 340px;">
+          <canvas id="lineChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         SECTION: ASPEK BISNIS DEEP DIVE
+         ════════════════════════════════════════════ -->
+    <div class="animate-on-scroll">
+      <div class="section-header">
+        <div class="section-header__icon"><i data-lucide="target"></i></div>
+        <h2 class="section-header__title">Aspek Bisnis Deep Dive</h2>
+        <span class="section-header__sub">Analisis rasio & distribusi per kategori</span>
+      </div>
+
+      <div class="charts-grid-2">
+        <div class="glass-card">
+          <div class="glass-card__title">
+            <i data-lucide="git-compare"></i>
+            Rasio Sentimen per Aspek (%)
+          </div>
+          <div class="chart-wrapper" style="height: 320px;">
+            <canvas id="hBarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="glass-card__title">
+            <i data-lucide="radar"></i>
+            Distribusi Aspek Bisnis
+          </div>
+          <div class="chart-wrapper" style="max-width: 380px; margin: 0 auto;">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         SECTION: DATA TABLE
+         ════════════════════════════════════════════ -->
+    <div class="animate-on-scroll" id="tableSection">
+      <div class="section-header">
+        <div class="section-header__icon"><i data-lucide="table-2"></i></div>
+        <h2 class="section-header__title">Tabel Data Ulasan</h2>
+        <span class="section-header__sub">Eksplorasi data detail</span>
+      </div>
+
+      <div class="glass-card">
+        <div class="table-controls">
+          <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="searchInput" placeholder="Cari ulasan, sentimen, atau aspek…">
+          </div>
+          <div class="table-info" id="tableInfo">Memuat data…</div>
+        </div>
+
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tanggal</th>
+                <th>Ulasan</th>
+                <th>Sentimen</th>
+                <th>Aspek Bisnis</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination" id="pagination">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         FOOTER
+         ════════════════════════════════════════════ -->
+    <footer class="footer animate-on-scroll">
+      <div class="footer__brand">
+        <i data-lucide="gem"></i>
+        Cicil Emas Dashboard
+      </div>
+      <p class="footer__text">
+        Data diolah menggunakan model <strong>BiLSTM Deep Learning</strong> dari Model.py<br>
+        Sumber: Ulasan Google Play Store — <strong>Tring by Pegadaian</strong> (com.pegadaiandigital)<br>
+        © 2026 Proyek Magang
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
