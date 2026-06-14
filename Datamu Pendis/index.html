@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datamu Pendis - Seksi Pendidikan Islam Minahasa</title>
+    <meta name="description" content="Digital Administrasi Terpadu Seksi Pendidikan Islam Kabupaten Minahasa">
     <!-- Tailwind CSS & FontAwesome Icons -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,8 +18,17 @@
             background-color: #ffffff;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%2016b39' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
-        .page { display: none; }
-        .page.active { display: block; }
+        .page { 
+            display: none; 
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .page.active { 
+            display: block; 
+            opacity: 1;
+            transform: translateY(0);
+        }
         .loader {
             border-top-color: #016b39;
             animation: spinner 1.5s linear infinite;
@@ -27,9 +37,116 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            min-width: 320px;
+            max-width: 420px;
+            padding: 14px 20px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+            animation: toastSlideIn 0.4s ease forwards;
+            backdrop-filter: blur(10px);
+        }
+        .toast.toast-success { background: linear-gradient(135deg, #016b39, #059669); }
+        .toast.toast-error { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .toast.toast-warning { background: linear-gradient(135deg, #d97706, #b45309); }
+        .toast.toast-info { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .toast-exit {
+            animation: toastSlideOut 0.35s ease forwards;
+        }
+        @keyframes toastSlideIn {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes toastSlideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(60px); }
+        }
+        .toast i { font-size: 18px; margin-top: 1px; }
+        .toast .toast-msg { flex: 1; line-height: 1.5; }
+        .toast .toast-close {
+            cursor: pointer; opacity: 0.7; font-size: 14px; margin-top: 1px;
+        }
+        .toast .toast-close:hover { opacity: 1; }
+
+        /* Calendar styles */
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: default;
+            position: relative;
+        }
+        .cal-day.today {
+            border: 2px solid #d4af37;
+            background: #fffbeb;
+            color: #92400e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0); }
+        }
+        .cal-day.uploaded {
+            background: linear-gradient(135deg, #059669, #016b39);
+            color: white;
+            border: 2px solid #047857;
+            box-shadow: 0 2px 8px rgba(1, 107, 57, 0.3);
+        }
+        .cal-day.uploaded.today {
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3), 0 2px 8px rgba(1, 107, 57, 0.3);
+        }
+        .cal-day.empty {
+            background: transparent;
+            cursor: default;
+        }
+        .cal-day.past {
+            background: #f3f4f6;
+            color: #9ca3af;
+        }
+        .cal-day.future {
+            background: #f9fafb;
+            color: #6b7280;
+        }
+        .cal-day .cal-check {
+            font-size: 8px;
+            position: absolute;
+            bottom: 3px;
+        }
+
+        /* Page transition helper */
+        .page-entering {
+            display: block !important;
+        }
     </style>
 </head>
 <body class="islamic-pattern min-h-screen flex flex-col justify-between">
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- OVERLAY LOADING -->
     <div id="loading-overlay" class="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center hidden">
@@ -42,7 +159,7 @@
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
             <!-- Logo Kemenag Kiri -->
             <div class="flex items-center justify-center">
-                <img src="logo Kemenag.png" alt="Logo Kemenag" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <img src="Logo Kemenag.png" alt="Logo Kemenag" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div style="display:none;" class="w-14 h-14 bg-[#016b39] rounded-full flex items-center justify-center text-white font-bold text-[10px] text-center p-1 border-2 border-[#d4af37]">KEMENAG</div>
             </div>
 
@@ -54,12 +171,11 @@
 
             <!-- Logo Pendis Kanan -->
             <div class="flex items-center justify-center">
-                <img src="logo Pendis.png" alt="Logo Pendis" class="h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="Logo Pendis.png" alt="Logo Pendis" class="h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <span style="display:none;" class="text-sm font-bold text-[#016b39] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Seksi Pendis Minahasa</span>
             </div>
         </div>
     </header>
-
     <!-- KONTEN UTAMA -->
     <main class="max-w-4xl w-full mx-auto p-4 flex-grow flex flex-col justify-center my-6">
 
@@ -84,7 +200,7 @@
                     </span>
                     <input type="password" id="login-pass" placeholder="Password" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]" required>
                 </div>
-                <button type="submit" class="w-full bg-[#016b39] text-white py-3 rounded-xl font-semibold shadow-md hover:bg-emerald-800 cursor-pointer">
+                <button type="submit" class="w-full bg-[#016b39] text-white py-3 rounded-xl font-semibold shadow-md hover:bg-emerald-800 cursor-pointer transition-colors">
                     Masuk Aplikasi
                 </button>
             </form>
@@ -183,29 +299,58 @@
                 </div>
 
                 <div class="md:col-span-2 flex space-x-2 pt-2">
-                    <button type="submit" class="flex-1 bg-[#016b39] text-white py-2.5 rounded-xl font-semibold shadow-md cursor-pointer">Daftar Akun</button>
-                    <button type="button" onclick="stopCamera(); navigateTo('page-login')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer">Kembali Login</button>
+                    <button type="submit" class="flex-1 bg-[#016b39] text-white py-2.5 rounded-xl font-semibold shadow-md cursor-pointer hover:bg-emerald-800 transition-colors">Daftar Akun</button>
+                    <button type="button" onclick="stopCamera(); navigateTo('page-login')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer hover:bg-gray-200 transition-colors">Kembali Login</button>
                 </div>
             </form>
         </section>
 
         <!-- ================= HALAMAN 3: DASHBOARD UTAMA ================= -->
         <section id="page-dashboard" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
-            <div class="mb-6 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
-                <div class="flex justify-between items-center mb-3">
-                    <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider"><i class="fa-solid fa-calendar-check mr-1"></i> Status Pengisian Berkas (Hari Ini)</h4>
-                    <span id="calendar-status-badge" class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Belum Ada Berkas Dikirim</span>
+            
+            <!-- KALENDER DINAMIS BULANAN -->
+            <div class="mb-6 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+                        <i class="fa-solid fa-calendar-check mr-1"></i> Kalender Progres Upload
+                    </h4>
+                    <span id="calendar-status-badge" class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-bold">
+                        Belum Ada Berkas Dikirim
+                    </span>
                 </div>
-                <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold">
-                    <div class="bg-gray-200 text-gray-400 p-2.5 rounded-lg">11 Jun</div>
-                    <div class="bg-gray-200 text-gray-400 p-2.5 rounded-lg">12 Jun</div>
-                    <div class="bg-gray-200 text-gray-400 p-2.5 rounded-lg">13 Jun</div>
-                    <div id="today-calendar-cell" class="bg-amber-100 text-amber-800 p-2.5 rounded-lg border-2 border-amber-400 animate-pulse">
-                        14 Jun (Hari Ini)
-                    </div>
-                    <div class="bg-gray-100 text-gray-400 p-2.5 rounded-lg">15 Jun</div>
-                    <div class="bg-gray-100 text-gray-400 p-2.5 rounded-lg">16 Jun</div>
-                    <div class="bg-gray-100 text-gray-400 p-2.5 rounded-lg">17 Jun</div>
+
+                <!-- Calendar Navigation -->
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-all">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <h5 id="calendar-month-title" class="text-sm font-bold text-[#016b39]"></h5>
+                    <button onclick="changeCalendarMonth(1)" class="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-all">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Day Headers -->
+                <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+                    <div class="text-center text-[10px] font-bold text-gray-400 py-1">SEN</div>
+                    <div class="text-center text-[10px] font-bold text-gray-400 py-1">SEL</div>
+                    <div class="text-center text-[10px] font-bold text-gray-400 py-1">RAB</div>
+                    <div class="text-center text-[10px] font-bold text-gray-400 py-1">KAM</div>
+                    <div class="text-center text-[10px] font-bold text-gray-400 py-1">JUM</div>
+                    <div class="text-center text-[10px] font-bold text-gray-400 py-1">SAB</div>
+                    <div class="text-center text-[10px] font-bold text-red-400 py-1">MIN</div>
+                </div>
+
+                <!-- Calendar Grid (rendered by JS) -->
+                <div id="calendar-grid" class="grid grid-cols-7 gap-1.5">
+                    <!-- Cells rendered dynamically -->
+                </div>
+
+                <!-- Calendar Legend -->
+                <div class="flex items-center justify-center gap-4 mt-3 text-[10px] text-gray-500">
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gradient-to-br from-emerald-600 to-emerald-800 inline-block"></span> Upload Berhasil</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-100 border border-amber-400 inline-block"></span> Hari Ini</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-200 inline-block"></span> Belum Upload</span>
                 </div>
             </div>
 
@@ -214,18 +359,18 @@
                     <h2 class="text-2xl font-bold text-[#016b39]" id="txt-welcome-user">Hallo User...</h2>
                     <p class="text-sm text-gray-500">Silahkan pilih layanan administrasi di bawah ini</p>
                 </div>
-                <button onclick="logout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Keluar</button>
+                <button onclick="logout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-red-100 transition-colors">Keluar</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button onclick="navigateTo('page-laporan')" class="p-6 bg-white hover:bg-amber-50/50 border-2 border-gray-100 hover:border-amber-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer">
-                    <div class="w-12 h-12 bg-[#d4af37] text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-file-invoice"></i></div>
+                <button onclick="navigateTo('page-laporan')" class="p-6 bg-white hover:bg-amber-50/50 border-2 border-gray-100 hover:border-amber-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer group">
+                    <div class="w-12 h-12 bg-[#d4af37] text-white rounded-xl flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-invoice"></i></div>
                     <h3 class="text-lg font-bold text-gray-800 mt-4">Laporan Kinerja</h3>
                     <p class="text-xs text-gray-500 mt-1">Laporan harian, bulanan, rencana kinerja, dan absensi bulanan.</p>
                 </button>
 
-                <button onclick="navigateTo('page-tpg')" class="p-6 bg-white hover:bg-emerald-50/50 border-2 border-gray-100 hover:border-emerald-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer">
-                    <div class="w-12 h-12 bg-[#016b39] text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-graduation-cap"></i></div>
+                <button onclick="navigateTo('page-tpg')" class="p-6 bg-white hover:bg-emerald-50/50 border-2 border-gray-100 hover:border-emerald-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer group">
+                    <div class="w-12 h-12 bg-[#016b39] text-white rounded-xl flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform"><i class="fa-solid fa-graduation-cap"></i></div>
                     <h3 class="text-lg font-bold text-gray-800 mt-4">TPG (Tunjangan Profesi Guru)</h3>
                     <p class="text-xs text-gray-500 mt-1">Pengunggahan berkas sertifikasi profesi guru kualifikasi khusus.</p>
                 </button>
@@ -235,18 +380,18 @@
         <!-- ================= HALAMAN 4: LAPORAN KINERJA ================= -->
         <section id="page-laporan" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
             <div class="flex items-center space-x-3 mb-6">
-                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer"><i class="fa-solid fa-arrow-left"></i></button>
+                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="text-2xl font-bold text-[#016b39]">Laporan Kinerja</h2>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Tahun</label>
-                    <select class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"><option>2026</option></select>
+                    <select id="laporan-tahun" class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Bulan</label>
-                    <select class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"><option>Juni</option></select>
+                    <select id="laporan-bulan" class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
                 </div>
             </div>
 
@@ -260,7 +405,7 @@
                         <div id="status-lapor-harian" class="text-right min-w-[150px]">
                             <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-lapor-harian', 'Laporan Kinerja', 'Laporan Kinerja Harian', 'status-lapor-harian')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                        <button onclick="uploadProses('input-lapor-harian', 'Laporan Kinerja', 'Laporan Kinerja Harian', 'status-lapor-harian')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
@@ -273,7 +418,7 @@
                         <div id="status-lapor-bulanan" class="text-right min-w-[150px]">
                             <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-lapor-bulanan', 'Laporan Kinerja', 'Laporan Kinerja Bulanan', 'status-lapor-bulanan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                        <button onclick="uploadProses('input-lapor-bulanan', 'Laporan Kinerja', 'Laporan Kinerja Bulanan', 'status-lapor-bulanan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
@@ -286,7 +431,7 @@
                         <div id="status-rencana-bulan" class="text-right min-w-[150px]">
                             <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-rencana-bulan', 'Laporan Kinerja', 'Rencana Kinerja Bulanan', 'status-rencana-bulan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                        <button onclick="uploadProses('input-rencana-bulan', 'Laporan Kinerja', 'Rencana Kinerja Bulanan', 'status-rencana-bulan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
@@ -299,7 +444,7 @@
                         <div id="status-absensi" class="text-right min-w-[150px]">
                             <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-absensi', 'Laporan Kinerja', 'Laporan Absensi Bulanan', 'status-absensi')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                        <button onclick="uploadProses('input-absensi', 'Laporan Kinerja', 'Laporan Absensi Bulanan', 'status-absensi')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
@@ -313,13 +458,19 @@
         <!-- ================= HALAMAN 5: TPG ================= -->
         <section id="page-tpg" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
             <div class="flex items-center space-x-3 mb-6">
-                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer"><i class="fa-solid fa-arrow-left"></i></button>
+                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="text-2xl font-bold text-[#016b39]">Tunjangan Profesi Guru (TPG)</h2>
             </div>
 
             <div class="grid grid-cols-3 gap-3 mb-6 bg-gray-50 p-4 rounded-xl">
-                <div><label class="block text-xs text-gray-500 mb-1">Tahun</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>2026</option></select></div>
-                <div><label class="block text-xs text-gray-500 mb-1">Bulan</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>Juni</option></select></div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Tahun</label>
+                    <select id="tpg-tahun" class="w-full p-2 bg-white rounded-lg text-xs"></select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Bulan</label>
+                    <select id="tpg-bulan" class="w-full p-2 bg-white rounded-lg text-xs"></select>
+                </div>
                 <div><label class="block text-xs text-gray-500 mb-1">Jenis TPG</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>TPG MADRASAH</option><option>TPG PPPK</option><option>TPG PAI</option></select></div>
             </div>
 
@@ -333,7 +484,7 @@
                         <div id="status-tpg-main" class="min-w-[150px] text-right">
                             <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-berkas-tpg', 'TPG', 'Berkas Persyaratan TPG', 'status-tpg-main')" class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                        <button onclick="uploadProses('input-berkas-tpg', 'TPG', 'Berkas Persyaratan TPG', 'status-tpg-main')" class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
@@ -357,16 +508,76 @@
 
     <!-- LOGIKAL INTERAKTIF JAVASCRIPT -->
     <script>
-        // TAUTKAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA DI SINI
+        // ==========================================
+        //  TAUTKAN URL DEPLOYMENT GOOGLE APPS SCRIPT
+        // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbxS6gvfr2o_vN_Nw6EjA4LsOPXbKe78TGv7byWinMvNd6g1njjJhvRXrPqk6GYSqQjEdg/exec";
 
-        // Global State User & Kamera
+        // Global State
         let currentUser = null;
         let localStream = null;
+        let userUploadHistory = [];      // Semua riwayat upload user
+        let calendarYear = new Date().getFullYear();
+        let calendarMonth = new Date().getMonth(); // 0-indexed
 
+        // ==========================================
+        //  TOAST NOTIFICATION SYSTEM
+        // ==========================================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const iconMap = {
+                success: 'fa-circle-check',
+                error: 'fa-circle-xmark',
+                warning: 'fa-triangle-exclamation',
+                info: 'fa-circle-info'
+            };
+            
+            toast.innerHTML = `
+                <i class="fa-solid ${iconMap[type] || iconMap.info}"></i>
+                <span class="toast-msg">${message}</span>
+                <span class="toast-close" onclick="this.parentElement.classList.add('toast-exit'); setTimeout(()=>this.parentElement.remove(), 350);">
+                    <i class="fa-solid fa-xmark"></i>
+                </span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('toast-exit');
+                    setTimeout(() => toast.remove(), 350);
+                }
+            }, duration);
+        }
+
+        // ==========================================
+        //  NAVIGASI HALAMAN
+        // ==========================================
         function navigateTo(pageId) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            // Fade out current page
+            const currentPage = document.querySelector('.page.active');
+            if (currentPage) {
+                currentPage.style.opacity = '0';
+                currentPage.style.transform = 'translateY(12px)';
+                setTimeout(() => {
+                    currentPage.classList.remove('active');
+                    // Show new page
+                    const newPage = document.getElementById(pageId);
+                    newPage.classList.add('active');
+                    // Force reflow
+                    void newPage.offsetWidth;
+                    newPage.style.opacity = '1';
+                    newPage.style.transform = 'translateY(0)';
+                }, 200);
+            } else {
+                const newPage = document.getElementById(pageId);
+                newPage.classList.add('active');
+                newPage.style.opacity = '1';
+                newPage.style.transform = 'translateY(0)';
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -377,7 +588,163 @@
             else overlay.classList.add('hidden');
         }
 
-        // ================= FUNGSI HARDWARE WEB CAM API =================
+        // ==========================================
+        //  FETCH WRAPPER — FIX CORS & REDIRECT
+        // ==========================================
+        async function apiFetch(payload) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                redirect: 'follow',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            return await response.json();
+        }
+
+        // ==========================================
+        //  DROPDOWN DINAMIS (TAHUN & BULAN)
+        // ==========================================
+        const BULAN_LIST = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+
+        function populateDropdowns() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            // Select elements to populate
+            const yearSelects = ['laporan-tahun', 'tpg-tahun'];
+            const monthSelects = ['laporan-bulan', 'tpg-bulan'];
+
+            yearSelects.forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                sel.innerHTML = '';
+                for (let y = currentYear - 2; y <= currentYear + 1; y++) {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = y;
+                    if (y === currentYear) opt.selected = true;
+                    sel.appendChild(opt);
+                }
+            });
+
+            monthSelects.forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                sel.innerHTML = '';
+                BULAN_LIST.forEach((name, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.textContent = name;
+                    if (idx === currentMonth) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+            });
+        }
+
+        // ==========================================
+        //  KALENDER DINAMIS BULANAN
+        // ==========================================
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const titleEl = document.getElementById('calendar-month-title');
+            grid.innerHTML = '';
+
+            const year = calendarYear;
+            const month = calendarMonth;
+
+            titleEl.textContent = `${BULAN_LIST[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+
+            // getDay(): 0=Sunday, convert to Monday-first (0=Mon, 6=Sun)
+            let startDow = firstDay.getDay() - 1;
+            if (startDow < 0) startDow = 6;
+
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+            // Collect upload dates from history
+            const uploadDates = new Set();
+            if (userUploadHistory && Array.isArray(userUploadHistory)) {
+                userUploadHistory.forEach(item => {
+                    if (item.tanggal) {
+                        // Extract date part (yyyy-MM-dd) from various formats
+                        const dateStr = item.tanggal.toString().substring(0, 10);
+                        uploadDates.add(dateStr);
+                    }
+                });
+            }
+
+            let uploadCountThisMonth = 0;
+
+            // Empty cells before month starts
+            for (let i = 0; i < startDow; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'cal-day empty';
+                grid.appendChild(emptyCell);
+            }
+
+            // Day cells
+            for (let d = 1; d <= daysInMonth; d++) {
+                const cell = document.createElement('div');
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const dateObj = new Date(year, month, d);
+                
+                let classes = 'cal-day';
+                const isToday = dateStr === todayStr;
+                const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const hasUpload = uploadDates.has(dateStr);
+
+                if (hasUpload) {
+                    classes += ' uploaded';
+                    uploadCountThisMonth++;
+                } else if (isPast) {
+                    classes += ' past';
+                } else if (!isToday) {
+                    classes += ' future';
+                }
+
+                if (isToday) {
+                    classes += ' today';
+                }
+
+                cell.className = classes;
+                cell.innerHTML = `<span>${d}</span>${hasUpload ? '<span class="cal-check"><i class="fa-solid fa-check"></i></span>' : ''}`;
+                
+                if (hasUpload) {
+                    cell.title = `Upload berhasil pada ${d} ${BULAN_LIST[month]} ${year}`;
+                }
+
+                grid.appendChild(cell);
+            }
+
+            // Update badge
+            const badge = document.getElementById('calendar-status-badge');
+            if (uploadCountThisMonth > 0) {
+                badge.className = 'text-[10px] bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-bold';
+                badge.textContent = `${uploadCountThisMonth} hari upload di ${BULAN_LIST[month]}`;
+            } else {
+                badge.className = 'text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-bold';
+                badge.textContent = 'Belum Ada Berkas Dikirim';
+            }
+        }
+
+        function changeCalendarMonth(delta) {
+            calendarMonth += delta;
+            if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+            if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+            renderCalendar();
+        }
+
+        // ==========================================
+        //  FUNGSI HARDWARE WEB CAM API
+        // ==========================================
         async function startCamera() {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ 
@@ -392,7 +759,7 @@
                 document.getElementById('btn-capture-photo').classList.remove('hidden');
                 document.getElementById('btn-start-camera').innerText = "Reset/Ulang Kamera";
             } catch (err) {
-                alert("Gagal mengakses kamera. Pastikan Anda memberikan izin akses kamera di browser Anda.");
+                showToast('Gagal mengakses kamera. Pastikan Anda memberikan izin akses kamera di browser Anda.', 'error');
                 console.error(err);
             }
         }
@@ -424,6 +791,7 @@
                 stopCamera();
                 document.getElementById('camera-box').classList.add('hidden');
                 document.getElementById('btn-capture-photo').classList.add('hidden');
+                showToast('Foto wajah berhasil diambil!', 'success');
             }
         }
 
@@ -434,66 +802,75 @@
             }
         }
 
-        // ================= AKSI REGISTRASI KE SPREADSHEET =================
+        // ==========================================
+        //  AKSI REGISTRASI KE SPREADSHEET
+        // ==========================================
         async function handleRegisterSubmit(e) {
             e.preventDefault();
             const nama = document.getElementById('reg-nama').value;
             const hp = document.getElementById('reg-hp').value;
             const email = document.getElementById('reg-email').value;
             const nip = document.getElementById('reg-nip').value;
+            const jk = document.getElementById('reg-jk').value;
+            const statusKepegawaian = document.getElementById('reg-status').value;
+            const sekolah = document.getElementById('reg-sekolah').value;
             const pass = document.getElementById('reg-pass').value;
             const pass2 = document.getElementById('reg-pass2').value;
             const fotoWajahBase64 = document.getElementById('reg-foto-wajah').value;
 
             // Validasi wajib foto wajah
             if (!fotoWajahBase64) {
-                alert('PENTING: Anda wajib melakukan Ambil Foto Wajah terlebih dahulu sebagai bukti verifikasi!');
+                showToast('PENTING: Anda wajib melakukan Ambil Foto Wajah terlebih dahulu sebagai bukti verifikasi!', 'error', 5000);
                 return;
             }
 
             if (pass !== pass2) {
-                alert('Konfirmasi password tidak cocok!');
+                showToast('Konfirmasi password tidak cocok!', 'error');
+                return;
+            }
+
+            if (pass.length < 4) {
+                showToast('Password minimal 4 karakter!', 'warning');
                 return;
             }
 
             toggleLoader(true, "Mendaftarkan akun & menyimpan Verifikasi Wajah...");
 
             try {
-                // Gunakan JSON Fetch agar muatan gambar yang besar terkirim utuh tanpa terpotong
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'register',
-                        nama: nama,
-                        hp: hp,
-                        email: email,
-                        nip: nip,
-                        password: pass,
-                        fotoWajah: fotoWajahBase64
-                    })
+                const result = await apiFetch({
+                    action: 'register',
+                    nama: nama,
+                    hp: hp,
+                    email: email,
+                    nip: nip,
+                    jk: jk,
+                    statusKepegawaian: statusKepegawaian,
+                    sekolah: sekolah,
+                    password: pass,
+                    fotoWajah: fotoWajahBase64
                 });
-                
-                const result = await response.json();
 
                 if (result.status === "SUCCESS") {
-                    alert('Registrasi Berhasil! Akun dan data wajah Anda telah aman disimpan di Cloud.');
+                    showToast('Registrasi Berhasil! Akun dan data wajah Anda telah aman disimpan di Cloud.', 'success', 5000);
                     document.getElementById('page-register').querySelector('form').reset();
                     document.getElementById('reg-foto-wajah').value = "";
                     document.getElementById('preview-box').classList.add('hidden');
                     document.getElementById('btn-start-camera').innerText = "Aktifkan Kamera";
                     navigateTo('page-login');
                 } else {
-                    alert(result.message);
+                    showToast(result.message || 'Registrasi gagal.', 'error');
                 }
 
             } catch (error) {
-                alert('Terjadi kendala saat menghubungkan ke server Google.');
+                showToast('Terjadi kendala saat menghubungkan ke server Google. Periksa koneksi internet Anda.', 'error', 5000);
                 console.error(error);
             }
             toggleLoader(false);
         }
 
-        // AKSI LOGIN DENGAN VALIDASI SPREADSHEET
+        // ==========================================
+        //  AKSI LOGIN DENGAN VALIDASI SPREADSHEET
+        // ==========================================
         async function handleLoginSubmit(e) {
             e.preventDefault();
             const nip = document.getElementById('login-nip').value;
@@ -502,30 +879,37 @@
             toggleLoader(true, "Membuka enkripsi data & mencocokkan NIP...");
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'login', nip, password: pass })
-                });
-                const result = await response.json();
+                const result = await apiFetch({ action: 'login', nip, password: pass });
 
                 if (result.status === "SUCCESS") {
                     currentUser = result.user;
                     document.getElementById('txt-welcome-user').innerText = `Hallo ${currentUser.nama} (NIP: ${currentUser.nip})`;
                     
-                    renderHistoryStatus(result.history);
+                    // Store history and render
+                    userUploadHistory = result.history || [];
+                    renderHistoryStatus(userUploadHistory);
+                    
+                    // Reset calendar to current month
+                    calendarYear = new Date().getFullYear();
+                    calendarMonth = new Date().getMonth();
+                    renderCalendar();
+                    
+                    showToast(`Selamat datang, ${currentUser.nama}!`, 'success');
                     navigateTo('page-dashboard');
                 } else {
-                    alert(result.message);
+                    showToast(result.message || 'NIP atau Password salah!', 'error');
                 }
             } catch (error) {
-                alert('Gagal terhubung ke database cloud atau setelan Web App belum sesuai.');
+                showToast('Gagal terhubung ke database cloud. Periksa koneksi internet atau setelan Web App.', 'error', 5000);
                 console.error(error);
             } finally {
                 toggleLoader(false);
             }
         }
 
-        // MEMETAKAN BERKAS YANG SUDAH PERNAH DIUPLOAD SEBELUMNYA
+        // ==========================================
+        //  MEMETAKAN BERKAS YANG SUDAH DIUPLOAD
+        // ==========================================
         function renderHistoryStatus(historyList) {
             const mapping = {
                 'Laporan Kinerja Harian': 'status-lapor-harian',
@@ -534,8 +918,6 @@
                 'Laporan Absensi Bulanan': 'status-absensi',
                 'Berkas Persyaratan TPG': 'status-tpg-main'
             };
-
-            let adaUploadHariIni = false;
 
             if(historyList && Array.isArray(historyList)) {
                 historyList.forEach(item => {
@@ -546,41 +928,34 @@
                                 <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${item.link}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
                             </span>`;
                     }
-                    
-                    const todayStr = new Date().toISOString().split('T')[0];
-                    if(item.tanggal && item.tanggal.includes(todayStr)){
-                        adaUploadHariIni = true;
-                    }
                 });
             }
-
-            if (adaUploadHariIni) {
-                setKalenderHijau();
-            }
         }
 
-        function setKalenderHijau() {
-            const targetCell = document.getElementById('today-calendar-cell');
-            targetCell.className = "bg-emerald-600 text-white p-2.5 rounded-lg border-2 border-emerald-400";
-            document.getElementById('calendar-status-badge').className = "text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold";
-            document.getElementById('calendar-status-badge').innerText = "Berkas Sukses Terkirim Hari Ini";
-        }
-
-        // PROSES UPLOAD FILE BASE64 KE GDRIVE & INPUT DATA KE SHEET USER
+        // ==========================================
+        //  UPLOAD FILE BASE64 KE GDRIVE & SHEET
+        // ==========================================
         function uploadProses(inputId, layanan, berkasType, statusDivId) {
             if (!currentUser) {
-                alert("Sesi login Anda habis, silahkan login kembali.");
+                showToast('Sesi login Anda habis, silahkan login kembali.', 'warning');
                 navigateTo('page-login');
                 return;
             }
 
             const fileInput = document.getElementById(inputId);
             if (fileInput.files.length === 0) {
-                alert('Pilih file terlebih dahulu sebelum menekan tombol upload!');
+                showToast('Pilih file terlebih dahulu sebelum menekan tombol upload!', 'warning');
                 return;
             }
 
             const file = fileInput.files[0];
+
+            // Validasi ukuran file (maks 10MB untuk base64 via Apps Script)
+            if (file.size > 10 * 1024 * 1024) {
+                showToast('Ukuran file terlalu besar! Maksimal 10MB.', 'error');
+                return;
+            }
+
             const reader = new FileReader();
             
             toggleLoader(true, `Mengirim file "${file.name}" ke Google Drive Anda...`);
@@ -598,26 +973,36 @@
                 };
 
                 try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
+                    const result = await apiFetch(payload);
 
                     if (result.status === "SUCCESS") {
-                        alert(`Berkas "${berkasType}" berhasil disimpan di Google Drive.`);
+                        showToast(`Berkas "${berkasType}" berhasil disimpan di Google Drive.`, 'success');
                         
                         document.getElementById(statusDivId).innerHTML = `
                             <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
                                 <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${result.fileUrl}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
                             </span>`;
                         
-                        setKalenderHijau();
+                        // Add to local history for calendar
+                        const uploadDate = result.tanggal || new Date().toISOString().split('T')[0];
+                        userUploadHistory.push({
+                            tanggal: uploadDate,
+                            layanan: layanan,
+                            namaBerkas: berkasType,
+                            link: result.fileUrl,
+                            status: 'Sukses'
+                        });
+                        
+                        // Re-render calendar to show new upload
+                        renderCalendar();
+                        
+                        // Clear file input
+                        fileInput.value = '';
                     } else {
-                        alert('Gagal Upload: ' + result.message);
+                        showToast('Gagal Upload: ' + (result.message || 'Terjadi kesalahan.'), 'error');
                     }
                 } catch (error) {
-                    alert('Terjadi kesalahan koneksi saat mencoba mengunggah.');
+                    showToast('Terjadi kesalahan koneksi saat mencoba mengunggah.', 'error');
                     console.error(error);
                 } finally {
                     toggleLoader(false);
@@ -627,8 +1012,12 @@
             reader.readAsDataURL(file);
         }
 
+        // ==========================================
+        //  LOGOUT
+        // ==========================================
         function logout() {
             currentUser = null;
+            userUploadHistory = [];
             document.getElementById('page-login').querySelector('form').reset();
             
             const statusIds = ['status-lapor-harian', 'status-lapor-bulanan', 'status-rencana-bulan', 'status-absensi', 'status-tpg-main'];
@@ -636,12 +1025,26 @@
                 document.getElementById(id).innerHTML = `<span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>`;
             });
             
-            document.getElementById('today-calendar-cell').className = "bg-amber-100 text-amber-800 p-2.5 rounded-lg border-2 border-amber-400 animate-pulse";
-            document.getElementById('calendar-status-badge').className = "text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold";
-            document.getElementById('calendar-status-badge').innerText = "Belum Ada Berkas Dikirim";
+            // Reset calendar
+            calendarYear = new Date().getFullYear();
+            calendarMonth = new Date().getMonth();
 
+            showToast('Anda telah keluar dari akun.', 'info');
             navigateTo('page-login');
         }
+
+        // ==========================================
+        //  INISIALISASI HALAMAN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDropdowns();
+            renderCalendar();
+
+            // Make sure first page is visible immediately
+            const loginPage = document.getElementById('page-login');
+            loginPage.style.opacity = '1';
+            loginPage.style.transform = 'translateY(0)';
+        });
     </script>
 </body>
 </html>
