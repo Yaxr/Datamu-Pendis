@@ -97,7 +97,13 @@ function handleRegister(data) {
   // Cek apakah NIP sudah terdaftar
   const rows = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
-    if (rows[i][4].toString().replace(/['\s]/g, "") === cleanNip) {
+    let existingNip = rows[i][4];
+    if (typeof existingNip === 'number') {
+      existingNip = existingNip.toFixed(0);
+    } else {
+      existingNip = existingNip.toString().replace(/[^0-9]/g, "").trim();
+    }
+    if (existingNip === cleanNip) {
       return createResponse({ status: "FAILED", message: "NIP sudah terdaftar di sistem!" });
     }
   }
@@ -152,19 +158,24 @@ function handleRegister(data) {
 
   // Masukkan data lengkap beserta LINK FOTO WAJAH ke sheet 'Users'
   // Kolom: Tanggal | Nama | HP | Email | NIP | Password | SheetName | FotoURL | JK | Status | Sekolah
-  sheet.appendRow([
+  // Tulis data ke baris baru
+  const newRow = sheet.getLastRow() + 1;
+  sheet.getRange(newRow, 1, 1, 11).setValues([[
     new Date(),
     data.nama,
-    "'" + data.hp,
+    data.hp.toString().trim(),
     data.email,
-    "'" + cleanNip,
-    data.password,
+    cleanNip,
+    data.password.toString(),
     sheetName,
     fotoUrl,
     data.jk || "Tidak diisi",
     data.statusKepegawaian || "Tidak diisi",
     data.sekolah || "Tidak diisi"
-  ]);
+  ]]);
+  // Paksa kolom NIP (E) dan HP (C) menjadi Plain Text agar tidak diubah format
+  sheet.getRange(newRow, 3).setNumberFormat("@"); // HP
+  sheet.getRange(newRow, 5).setNumberFormat("@"); // NIP
 
   return createResponse({ status: "SUCCESS", message: "Registrasi Berhasil" });
 }
@@ -181,11 +192,19 @@ function handleLogin(data) {
   }
 
   const rows = userSheet.getDataRange().getValues();
-  const inputNipClean = data.nip.toString().replace(/\D/g, "").trim();
+  const inputNipClean = data.nip.toString().replace(/[^0-9]/g, "").trim();
   const inputPassClean = data.password.toString().trim();
 
   for (let i = 1; i < rows.length; i++) {
-    let sheetNip = rows[i][4].toString().replace(/\D/g, "").trim();
+    // Bersihkan NIP dari semua karakter non-angka dan spasi
+    let rawNip = rows[i][4];
+    let sheetNip = "";
+    if (typeof rawNip === 'number') {
+      sheetNip = rawNip.toFixed(0);
+    } else {
+      sheetNip = rawNip.toString().replace(/[^0-9]/g, "").trim();
+    }
+    
     let sheetPass = rows[i][5].toString().trim();
 
     if (sheetNip === inputNipClean && sheetPass === inputPassClean) {
