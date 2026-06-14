@@ -42,11 +42,11 @@
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
             <!-- Logo Kemenag Kiri -->
             <div class="flex items-center justify-center">
-                <img src="Logo Kemenag.Jpeg" alt="Logo Kemenag" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <img src="logo-kemenag.png" alt="Logo Kemenag" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div style="display:none;" class="w-14 h-14 bg-[#016b39] rounded-full flex items-center justify-center text-white font-bold text-[10px] text-center p-1 border-2 border-[#d4af37]">KEMENAG</div>
             </div>
 
-            <!-- TEKS JUDUL TENGAH (ALIGN CENTER) -->
+            <!-- TEKS JUDUL TENGAH -->
             <div class="text-center flex-grow px-4">
                 <h1 class="text-xl font-bold text-[#016b39] tracking-wide">Datamu Pendis</h1>
                 <p class="text-xs text-gray-500 font-medium">Digital Administrasi Terpadu Seksi Pendidikan Islam</p>
@@ -54,7 +54,7 @@
 
             <!-- Logo Pendis Kanan -->
             <div class="flex items-center justify-center">
-                <img src="Logo Pendis.Jpeg" alt="Logo Pendis" class="h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="logo-pendis.png" alt="Logo Pendis" class="h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <span style="display:none;" class="text-sm font-bold text-[#016b39] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Seksi Pendis Minahasa</span>
             </div>
         </div>
@@ -99,7 +99,6 @@
                 </div>
             </div>
         </section>
-
 
         <!-- ================= HALAMAN 2: REGISTER ================= -->
         <section id="page-register" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-xl mx-auto w-full">
@@ -153,23 +152,45 @@
                     <input type="password" id="reg-pass2" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
                 </div>
                 
-                <div class="md:col-span-2 bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center">
-                    <label class="block text-sm font-bold text-[#016b39] mb-2"><i class="fa-solid fa-face-smile mr-2"></i>Verifikasi Scan Wajah</label>
-                    <button type="button" onclick="alert('Mengaktifkan Kamera...')" class="bg-white border border-[#016b39] text-[#016b39] px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Ambil Foto Wajah</button>
+                <!-- KAMERA & VERIFIKASI WAJAH (WAJIB ISI) -->
+                <div class="md:col-span-2 bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center space-y-3">
+                    <label class="block text-sm font-bold text-[#016b39] mb-1">
+                        <i class="fa-solid fa-face-smile mr-2"></i>Verifikasi Scan Wajah <span class="text-red-600">(Wajib) *</span>
+                    </label>
+                    
+                    <!-- Area Kamera Hidup -->
+                    <div id="camera-box" class="hidden max-w-xs mx-auto overflow-hidden rounded-lg border-2 border-[#016b39] bg-black">
+                        <video id="webcam-stream" autoplay playsinline class="w-full h-auto scale-x-[-1]"></video>
+                    </div>
+
+                    <!-- Tempat Pratinjau Foto yang diambil -->
+                    <div id="preview-box" class="hidden max-w-xs mx-auto overflow-hidden rounded-lg border-2 border-amber-400 bg-gray-100">
+                        <img id="face-photo-preview" src="" class="w-full h-auto">
+                    </div>
+
+                    <div class="flex justify-center gap-2">
+                        <button type="button" id="btn-start-camera" onclick="startCamera()" class="bg-white border border-[#016b39] text-[#016b39] px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+                            <i class="fa-solid fa-camera mr-1"></i>Aktifkan Kamera
+                        </button>
+                        <button type="button" id="btn-capture-photo" onclick="capturePhoto()" class="hidden bg-amber-500 text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+                            <i class="fa-solid fa-circle-dot mr-1"></i>Ambil Foto
+                        </button>
+                    </div>
+                    
+                    <!-- Element penyimpan string gambar sementara (tidak terlihat) -->
+                    <input type="hidden" id="reg-foto-wajah" required>
+                    <canvas id="camera-canvas" class="hidden"></canvas>
                 </div>
 
                 <div class="md:col-span-2 flex space-x-2 pt-2">
                     <button type="submit" class="flex-1 bg-[#016b39] text-white py-2.5 rounded-xl font-semibold shadow-md cursor-pointer">Daftar Akun</button>
-                    <button type="button" onclick="navigateTo('page-login')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer">Kembali Login</button>
+                    <button type="button" onclick="stopCamera(); navigateTo('page-login')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer">Kembali Login</button>
                 </div>
             </form>
         </section>
 
-
         <!-- ================= HALAMAN 3: DASHBOARD UTAMA ================= -->
         <section id="page-dashboard" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
-            
-            <!-- KALENDER PALING ATAS UTK USER -->
             <div class="mb-6 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider"><i class="fa-solid fa-calendar-check mr-1"></i> Status Pengisian Berkas (Hari Ini)</h4>
@@ -197,14 +218,12 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Menu Laporan Kinerja -->
                 <button onclick="navigateTo('page-laporan')" class="p-6 bg-white hover:bg-amber-50/50 border-2 border-gray-100 hover:border-amber-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer">
                     <div class="w-12 h-12 bg-[#d4af37] text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-file-invoice"></i></div>
                     <h3 class="text-lg font-bold text-gray-800 mt-4">Laporan Kinerja</h3>
                     <p class="text-xs text-gray-500 mt-1">Laporan harian, bulanan, rencana kinerja, dan absensi bulanan.</p>
                 </button>
 
-                <!-- Menu TPG -->
                 <button onclick="navigateTo('page-tpg')" class="p-6 bg-white hover:bg-emerald-50/50 border-2 border-gray-100 hover:border-emerald-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer">
                     <div class="w-12 h-12 bg-[#016b39] text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-graduation-cap"></i></div>
                     <h3 class="text-lg font-bold text-gray-800 mt-4">TPG (Tunjangan Profesi Guru)</h3>
@@ -212,7 +231,6 @@
                 </button>
             </div>
         </section>
-
 
         <!-- ================= HALAMAN 4: LAPORAN KINERJA ================= -->
         <section id="page-laporan" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
@@ -232,10 +250,7 @@
                 </div>
             </div>
 
-            <!-- List Upload Form Berkas -->
             <div class="space-y-4">
-                
-                <!-- Berkas 1 -->
                 <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Laporan Kinerja Harian</h3>
@@ -249,7 +264,6 @@
                     </div>
                 </div>
 
-                <!-- Berkas 2 -->
                 <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Laporan Kinerja Bulanan</h3>
@@ -263,7 +277,6 @@
                     </div>
                 </div>
 
-                <!-- Berkas 3 -->
                 <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Rencana Kinerja Bulanan</h3>
@@ -277,7 +290,6 @@
                     </div>
                 </div>
 
-                <!-- Berkas 4 -->
                 <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Laporan Absensi Bulanan</h3>
@@ -297,7 +309,6 @@
                 </div>
             </div>
         </section>
-
 
         <!-- ================= HALAMAN 5: TPG ================= -->
         <section id="page-tpg" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
@@ -349,8 +360,9 @@
         // TAUTKAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA DI SINI
         const API_URL = "https://script.google.com/macros/s/AKfycbxS6gvfr2o_vN_Nw6EjA4LsOPXbKe78TGv7byWinMvNd6g1njjJhvRXrPqk6GYSqQjEdg/exec";
 
-        // Global State User
+        // Global State User & Kamera
         let currentUser = null;
+        let localStream = null;
 
         function navigateTo(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
@@ -365,8 +377,64 @@
             else overlay.classList.add('hidden');
         }
 
-        // AKSI REGISTRASI KE SPREADSHEET
-        // CARI KODE INI PADA Halaman REGISTER DI index.html ANDA, LALU GANTI:
+        // ================= FUNGSI HARDWARE WEB CAM API =================
+        async function startCamera() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 400, height: 300, facingMode: "user" }, 
+                    audio: false 
+                });
+                const videoElement = document.getElementById('webcam-stream');
+                videoElement.srcObject = localStream;
+                
+                document.getElementById('camera-box').classList.remove('hidden');
+                document.getElementById('preview-box').classList.add('hidden');
+                document.getElementById('btn-capture-photo').classList.remove('hidden');
+                document.getElementById('btn-start-camera').innerText = "Reset/Ulang Kamera";
+            } catch (err) {
+                alert("Gagal mengakses kamera. Pastikan Anda memberikan izin akses kamera di browser Anda.");
+                console.error(err);
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('webcam-stream');
+            const canvas = document.getElementById('camera-canvas');
+            const context = canvas.getContext('2d');
+
+            if (localStream) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Efek Mirroring Wajah agar natural
+                context.translate(canvas.width, 0);
+                context.scale(-1, 1);
+                
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Ambil base64 string gambar
+                const base64Photo = canvas.toDataURL('image/jpeg');
+                document.getElementById('reg-foto-wajah').value = base64Photo;
+
+                // Tampilkan hasil foto ke layar pratinjau
+                document.getElementById('face-photo-preview').src = base64Photo;
+                document.getElementById('preview-box').classList.remove('hidden');
+                
+                // Matikan kamera setelah diambil gambarnya
+                stopCamera();
+                document.getElementById('camera-box').classList.add('hidden');
+                document.getElementById('btn-capture-photo').classList.add('hidden');
+            }
+        }
+
+        function stopCamera() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+        }
+
+        // ================= AKSI REGISTRASI KE SPREADSHEET =================
         async function handleRegisterSubmit(e) {
             e.preventDefault();
             const nama = document.getElementById('reg-nama').value;
@@ -375,37 +443,54 @@
             const nip = document.getElementById('reg-nip').value;
             const pass = document.getElementById('reg-pass').value;
             const pass2 = document.getElementById('reg-pass2').value;
+            const fotoWajahBase64 = document.getElementById('reg-foto-wajah').value;
+
+            // Validasi wajib foto wajah
+            if (!fotoWajahBase64) {
+                alert('PENTING: Anda wajib melakukan Ambil Foto Wajah terlebih dahulu sebagai bukti verifikasi!');
+                return;
+            }
 
             if (pass !== pass2) {
                 alert('Konfirmasi password tidak cocok!');
                 return;
             }
 
-            toggleLoader(true, "Mendaftarkan akun & membuat Cloud Sheet Anda...");
+            toggleLoader(true, "Mendaftarkan akun & menyimpan Verifikasi Wajah...");
 
-            // Perubahan penanganan bypass CORS khusus Google Apps Script via URLSearchParams
             try {
+                // Gunakan JSON Fetch agar muatan gambar yang besar terkirim utuh tanpa terpotong
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // <--- PENTING: Mengabaikan aturan CORS untuk Google Apps Script
-                    headers: {
-                        'Content-Type': 'text/plain' // Menggunakan text/plain agar tidak memicu preflight CORS
-                    },
-                    body: JSON.stringify({ action: 'register', nama, hp, email, nip, password: pass })
+                    body: JSON.stringify({
+                        action: 'register',
+                        nama: nama,
+                        hp: hp,
+                        email: email,
+                        nip: nip,
+                        password: pass,
+                        fotoWajah: fotoWajahBase64
+                    })
                 });
+                
+                const result = await response.json();
 
-                // Catatan: Saat menggunakan mode 'no-cors', browser tidak dapat membaca isi JSON response (opaque).
-                // Jadi kita asumsikan proses berhasil jika tidak melempar error jaringan.
-                alert('Permintaan registrasi telah dikirim ke sistem! Silahkan coba login.');
-                document.getElementById('page-register').querySelector('form').reset();
-                navigateTo('page-login');
+                if (result.status === "SUCCESS") {
+                    alert('Registrasi Berhasil! Akun dan data wajah Anda telah aman disimpan di Cloud.');
+                    document.getElementById('page-register').querySelector('form').reset();
+                    document.getElementById('reg-foto-wajah').value = "";
+                    document.getElementById('preview-box').classList.add('hidden');
+                    document.getElementById('btn-start-camera').innerText = "Aktifkan Kamera";
+                    navigateTo('page-login');
+                } else {
+                    alert(result.message);
+                }
 
             } catch (error) {
                 alert('Terjadi kendala saat menghubungkan ke server Google.');
                 console.error(error);
-            } finally {
-                toggleLoader(false);
             }
+            toggleLoader(false);
         }
 
         // AKSI LOGIN DENGAN VALIDASI SPREADSHEET
@@ -427,15 +512,14 @@
                     currentUser = result.user;
                     document.getElementById('txt-welcome-user').innerText = `Hallo ${currentUser.nama} (NIP: ${currentUser.nip})`;
                     
-                    // Render status upload berdasarkan riwayat yang ditarik dari Cloud Sheet pribadi
                     renderHistoryStatus(result.history);
-                    
                     navigateTo('page-dashboard');
                 } else {
                     alert(result.message);
                 }
             } catch (error) {
-                alert('Gagal terhubung ke database cloud.');
+                alert('Gagal terhubung ke database cloud atau setelan Web App belum sesuai.');
+                console.error(error);
             } finally {
                 toggleLoader(false);
             }
@@ -443,7 +527,6 @@
 
         // MEMETAKAN BERKAS YANG SUDAH PERNAH DIUPLOAD SEBELUMNYA
         function renderHistoryStatus(historyList) {
-            // Mapping ID berkas di web berdasarkan nama tipe berkas di Google Sheet
             const mapping = {
                 'Laporan Kinerja Harian': 'status-lapor-harian',
                 'Laporan Kinerja Bulanan': 'status-lapor-bulanan',
@@ -454,21 +537,22 @@
 
             let adaUploadHariIni = false;
 
-            historyList.forEach(item => {
-                const elementId = mapping[item.namaBerkas];
-                if (elementId) {
-                    document.getElementById(elementId).innerHTML = `
-                        <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
-                            <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${item.link}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
-                        </span>`;
-                }
-                
-                // Cek apakah tanggal upload adalah hari ini (pencocokan sederhana berbasis string tanggal)
-                const todayStr = new Date().toISOString().split('T')[0];
-                if(item.tanggal && item.tanggal.includes(todayStr)){
-                    adaUploadHariIni = true;
-                }
-            });
+            if(historyList && Array.isArray(historyList)) {
+                historyList.forEach(item => {
+                    const elementId = mapping[item.namaBerkas];
+                    if (elementId) {
+                        document.getElementById(elementId).innerHTML = `
+                            <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
+                                <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${item.link}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
+                            </span>`;
+                    }
+                    
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    if(item.tanggal && item.tanggal.includes(todayStr)){
+                        adaUploadHariIni = true;
+                    }
+                });
+            }
 
             if (adaUploadHariIni) {
                 setKalenderHijau();
@@ -484,6 +568,12 @@
 
         // PROSES UPLOAD FILE BASE64 KE GDRIVE & INPUT DATA KE SHEET USER
         function uploadProses(inputId, layanan, berkasType, statusDivId) {
+            if (!currentUser) {
+                alert("Sesi login Anda habis, silahkan login kembali.");
+                navigateTo('page-login');
+                return;
+            }
+
             const fileInput = document.getElementById(inputId);
             if (fileInput.files.length === 0) {
                 alert('Pilih file terlebih dahulu sebelum menekan tombol upload!');
@@ -517,19 +607,18 @@
                     if (result.status === "SUCCESS") {
                         alert(`Berkas "${berkasType}" berhasil disimpan di Google Drive.`);
                         
-                        // Perbarui tampilan status baris formulir tersebut menjadi hijau secara langsung
                         document.getElementById(statusDivId).innerHTML = `
                             <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
                                 <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${result.fileUrl}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
                             </span>`;
                         
-                        // Warnai Kalender Menjadi Hijau
                         setKalenderHijau();
                     } else {
                         alert('Gagal Upload: ' + result.message);
                     }
                 } catch (error) {
                     alert('Terjadi kesalahan koneksi saat mencoba mengunggah.');
+                    console.error(error);
                 } finally {
                     toggleLoader(false);
                 }
@@ -542,13 +631,11 @@
             currentUser = null;
             document.getElementById('page-login').querySelector('form').reset();
             
-            // Kembalikan semua indikator berkas ke merah semula saat logout
             const statusIds = ['status-lapor-harian', 'status-lapor-bulanan', 'status-rencana-bulan', 'status-absensi', 'status-tpg-main'];
             statusIds.forEach(id => {
                 document.getElementById(id).innerHTML = `<span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>`;
             });
             
-            // Kembalikan kalender ke kuning/normal semula
             document.getElementById('today-calendar-cell').className = "bg-amber-100 text-amber-800 p-2.5 rounded-lg border-2 border-amber-400 animate-pulse";
             document.getElementById('calendar-status-badge').className = "text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold";
             document.getElementById('calendar-status-badge').innerText = "Belum Ada Berkas Dikirim";
