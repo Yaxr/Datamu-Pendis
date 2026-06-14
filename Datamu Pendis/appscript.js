@@ -50,12 +50,30 @@ function handleRegister(data) {
   if (!sheet) {
     // Buat sheet Users jika belum ada
     sheet = ss.insertSheet("Users");
+  }
+
+  // Jika sheet Users kosong (belum ada header), buat header dan formatting
+  if (sheet.getLastRow() === 0) {
     sheet.getRange("A1:K1").setValues([[
       "Tanggal Daftar", "Nama", "No HP", "Email", "NIP",
       "Password", "Sheet Name", "Foto URL", "Jenis Kelamin",
       "Status Kepegawaian", "Asal Sekolah"
     ]]);
     sheet.getRange("A1:K1").setFontWeight("bold").setBackground("#016b39").setFontColor("white").setHorizontalAlignment("center");
+    // Format kolom C (HP) dan E (NIP) sebagai Plain Text
+    sheet.getRange("C:C").setNumberFormat("@");
+    sheet.getRange("E:E").setNumberFormat("@");
+    sheet.setColumnWidth(1, 150); // Tanggal Daftar
+    sheet.setColumnWidth(2, 200); // Nama
+    sheet.setColumnWidth(3, 120); // HP
+    sheet.setColumnWidth(4, 200); // Email
+    sheet.setColumnWidth(5, 180); // NIP
+    sheet.setColumnWidth(6, 120); // Password
+    sheet.setColumnWidth(7, 200); // Sheet Name
+    sheet.setColumnWidth(8, 300); // Foto URL
+    sheet.setColumnWidth(9, 120); // JK
+    sheet.setColumnWidth(10, 150); // Status
+    sheet.setColumnWidth(11, 200); // Sekolah
   }
 
   const cleanNip = data.nip.toString().trim();
@@ -88,7 +106,16 @@ function handleRegister(data) {
 
   // PROSES PEMBUATAN FOLDER & PENYIMPANAN FOTO WAJAH KE DRIVE
   try {
-    const mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
+    let mainFolder;
+    try {
+      if (MAIN_FOLDER_ID && MAIN_FOLDER_ID.trim() !== "") {
+        mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
+      } else {
+        mainFolder = DriveApp.getRootFolder();
+      }
+    } catch (err) {
+      mainFolder = DriveApp.getRootFolder();
+    }
 
     // Cari atau buat folder personal user
     const folders = mainFolder.getFoldersByName(sheetName);
@@ -160,14 +187,14 @@ function handleLogin(data) {
   }
 
   const rows = userSheet.getDataRange().getValues();
-  const inputNip = data.nip.toString().trim();
-  const inputPass = data.password.toString();
+  const inputNipClean = data.nip.toString().replace(/\D/g, "").trim();
+  const inputPassClean = data.password.toString().trim();
 
   for (let i = 1; i < rows.length; i++) {
-    let sheetNip = rows[i][4].toString().replace(/['\s]/g, "");
-    let sheetPass = rows[i][5].toString();
+    let sheetNip = rows[i][4].toString().replace(/\D/g, "").trim();
+    let sheetPass = rows[i][5].toString().trim();
 
-    if (sheetNip === inputNip && sheetPass === inputPass) {
+    if (sheetNip === inputNipClean && sheetPass === inputPassClean) {
       const sheetName = rows[i][6];
       const personalSheet = ss.getSheetByName(sheetName);
       let history = [];
@@ -222,7 +249,17 @@ function handleFileUpload(data) {
     personalSheet.setColumnWidth(5, 100);
   }
 
-  const mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
+  let mainFolder;
+  try {
+    if (MAIN_FOLDER_ID && MAIN_FOLDER_ID.trim() !== "") {
+      mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
+    } else {
+      mainFolder = DriveApp.getRootFolder();
+    }
+  } catch (err) {
+    mainFolder = DriveApp.getRootFolder();
+  }
+
   const folders = mainFolder.getFoldersByName(data.sheetName);
   let targetFolder;
   if (folders.hasNext()) {
