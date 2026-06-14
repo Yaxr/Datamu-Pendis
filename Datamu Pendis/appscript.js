@@ -59,7 +59,22 @@ function handleRegister(data) {
   }
 
   const cleanNip = data.nip.toString().trim();
-  const sheetName = data.nama.replace(/[^a-zA-Z0-9]/g, "_") + "_" + cleanNip;
+  const namaTrim = data.nama.trim();
+
+  // VALIDASI NIP (wajib 18 digit angka)
+  if (!/^\d{18}$/.test(cleanNip)) {
+    return createResponse({ status: "FAILED", message: "NIP harus berupa 18 digit angka!" });
+  }
+
+  // VALIDASI NAMA LENGKAP (minimal 2 kata)
+  const kataNama = namaTrim.split(/\s+/).filter(Boolean);
+  if (kataNama.length < 2) {
+    return createResponse({ status: "FAILED", message: "Masukkan nama lengkap Anda (minimal 2 kata)!" });
+  }
+
+  // Nama Sheet baru dengan pola Nama-NIP
+  const cleanNameForSheet = namaTrim.replace(/[\*\?\/\:\\\[\]]/g, "");
+  const sheetName = `${cleanNameForSheet}-${cleanNip}`;
 
   // Cek apakah NIP sudah terdaftar
   const rows = sheet.getDataRange().getValues();
@@ -193,10 +208,18 @@ function handleLogin(data) {
 // ==========================================
 function handleFileUpload(data) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const personalSheet = ss.getSheetByName(data.sheetName);
+  let personalSheet = ss.getSheetByName(data.sheetName);
 
   if (!personalSheet) {
-    return createResponse({ status: "ERROR", message: "Sheet data pengajar tidak ditemukan." });
+    // Buat Sheet baru jika tidak ditemukan (misal terhapus)
+    personalSheet = ss.insertSheet(data.sheetName);
+    personalSheet.getRange("A1:E1").setValues([["Tanggal Upload", "Kategori Layanan", "Nama Berkas", "Link Google Drive", "Status"]]);
+    personalSheet.getRange("A1:E1").setFontWeight("bold").setBackground("#016b39").setFontColor("white").setHorizontalAlignment("center");
+    personalSheet.setColumnWidth(1, 150);
+    personalSheet.setColumnWidth(2, 150);
+    personalSheet.setColumnWidth(3, 200);
+    personalSheet.setColumnWidth(4, 350);
+    personalSheet.setColumnWidth(5, 100);
   }
 
   const mainFolder = DriveApp.getFolderById(MAIN_FOLDER_ID);
