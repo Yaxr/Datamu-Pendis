@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datamu Pendis - Seksi Pendidikan Islam Minahasa</title>
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f5;
+        }
+        .islamic-pattern {
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%2016b39' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .loader {
+            border-top-color: #016b39;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="islamic-pattern min-h-screen flex flex-col justify-between">
+
+    <!-- OVERLAY LOADING -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center hidden">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white font-semibold text-sm" id="loading-text">Memproses ke sistem cloud...</p>
+    </div>
+
+    <!-- HEADER UTAMA -->
+    <header class="bg-white shadow-sm border-b-4 border-[#d4af37] p-4">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+            <!-- Logo Kemenag Kiri -->
+            <div class="flex items-center justify-center">
+                <img src="Logo Kemenag.Jpeg" alt="Logo Kemenag" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display:none;" class="w-14 h-14 bg-[#016b39] rounded-full flex items-center justify-center text-white font-bold text-[10px] text-center p-1 border-2 border-[#d4af37]">KEMENAG</div>
+            </div>
+
+            <!-- TEKS JUDUL TENGAH (ALIGN CENTER) -->
+            <div class="text-center flex-grow px-4">
+                <h1 class="text-xl font-bold text-[#016b39] tracking-wide">Datamu Pendis</h1>
+                <p class="text-xs text-gray-500 font-medium">Digital Administrasi Terpadu Seksi Pendidikan Islam</p>
+            </div>
+
+            <!-- Logo Pendis Kanan -->
+            <div class="flex items-center justify-center">
+                <img src="Logo Pendis.Jpeg" alt="Logo Pendis" class="h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none;" class="text-sm font-bold text-[#016b39] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Seksi Pendis Minahasa</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- KONTEN UTAMA -->
+    <main class="max-w-4xl w-full mx-auto p-4 flex-grow flex flex-col justify-center my-6">
+
+        <!-- ================= HALAMAN 1: LOGIN ================= -->
+        <section id="page-login" class="page active bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md mx-auto w-full text-center">
+            <div class="mb-6">
+                <i class="fa-solid fa-mosque text-4xl text-[#d4af37] mb-2"></i>
+                <h2 class="text-2xl font-bold text-[#016b39]">Ahlan wa Sahlan</h2>
+                <p class="text-sm text-gray-500">Silahkan masuk ke akun Anda</p>
+            </div>
+
+            <form onsubmit="handleLoginSubmit(event);" class="space-y-4">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-id-card"></i>
+                    </span>
+                    <input type="text" id="login-nip" placeholder="NIP / Nomor Identitas" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]" required>
+                </div>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="login-pass" placeholder="Password" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]" required>
+                </div>
+                <button type="submit" class="w-full bg-[#016b39] text-white py-3 rounded-xl font-semibold shadow-md hover:bg-emerald-800 cursor-pointer">
+                    Masuk Aplikasi
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-gray-100 space-y-3 text-sm">
+                <p class="text-gray-600">Belum Punya Akun? 
+                    <button onclick="navigateTo('page-register')" class="text-[#016b39] font-bold hover:underline cursor-pointer">Daftar Di Sini</button>
+                </p>
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-circle-info text-amber-600"></i>
+                    <p class="text-xs text-amber-800 text-left">Lupa Password? Silahkan hubungi <strong>Halo Murni</strong></p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= HALAMAN 2: REGISTER ================= -->
+        <section id="page-register" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-xl mx-auto w-full">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-[#016b39]">Formulir Registrasi</h2>
+                <p class="text-sm text-gray-500">Lengkapi data administrasi Pendis Anda</p>
+            </div>
+
+            <form onsubmit="handleRegisterSubmit(event);" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Lengkap</label>
+                    <input type="text" id="reg-nama" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">No. HP (WhatsApp)</label>
+                    <input type="tel" id="reg-hp" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Email Aktif</label>
+                    <input type="email" id="reg-email" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-red-600 mb-1">NIP (Wajib) *</label>
+                    <input type="text" id="reg-nip" class="w-full p-2.5 bg-gray-50 border border-red-200 rounded-lg focus:outline-none focus:border-[#016b39]" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Kelamin</label>
+                    <select id="reg-jk" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none">
+                        <option>Laki-laki</option>
+                        <option>Perempuan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Status Kepegawaian</label>
+                    <select id="reg-status" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none">
+                        <option>PNS</option>
+                        <option>PPPK</option>
+                        <option>Honor</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Asal Sekolah / Madrasah</label>
+                    <input type="text" id="reg-sekolah" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+                    <input type="password" id="reg-pass" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Ulangi Password</label>
+                    <input type="password" id="reg-pass2" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                </div>
+                
+                <div class="md:col-span-2 bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center">
+                    <label class="block text-sm font-bold text-[#016b39] mb-2"><i class="fa-solid fa-face-smile mr-2"></i>Verifikasi Scan Wajah</label>
+                    <button type="button" onclick="alert('Mengaktifkan Kamera...')" class="bg-white border border-[#016b39] text-[#016b39] px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Ambil Foto Wajah</button>
+                </div>
+
+                <div class="md:col-span-2 flex space-x-2 pt-2">
+                    <button type="submit" class="flex-1 bg-[#016b39] text-white py-2.5 rounded-xl font-semibold shadow-md cursor-pointer">Daftar Akun</button>
+                    <button type="button" onclick="navigateTo('page-login')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer">Kembali Login</button>
+                </div>
+            </form>
+        </section>
+
+
+        <!-- ================= HALAMAN 3: DASHBOARD UTAMA ================= -->
+        <section id="page-dashboard" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
+            
+            <!-- KALENDER PALING ATAS UTK USER -->
+            <div class="mb-6 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider"><i class="fa-solid fa-calendar-check mr-1"></i> Status Pengisian Berkas (Hari Ini)</h4>
+                    <span id="calendar-status-badge" class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Belum Ada Berkas Dikirim</span>
+                </div>
+                <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold">
+                    <div class="bg-gray-200 text-gray-400 p-2.5 rounded-lg">11 Jun</div>
+                    <div class="bg-gray-200 text-gray-400 p-2.5 rounded-lg">12 Jun</div>
+                    <div class="bg-gray-200 text-gray-400 p-2.5 rounded-lg">13 Jun</div>
+                    <div id="today-calendar-cell" class="bg-amber-100 text-amber-800 p-2.5 rounded-lg border-2 border-amber-400 animate-pulse">
+                        14 Jun (Hari Ini)
+                    </div>
+                    <div class="bg-gray-100 text-gray-400 p-2.5 rounded-lg">15 Jun</div>
+                    <div class="bg-gray-100 text-gray-400 p-2.5 rounded-lg">16 Jun</div>
+                    <div class="bg-gray-100 text-gray-400 p-2.5 rounded-lg">17 Jun</div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+                <div>
+                    <h2 class="text-2xl font-bold text-[#016b39]" id="txt-welcome-user">Hallo User...</h2>
+                    <p class="text-sm text-gray-500">Silahkan pilih layanan administrasi di bawah ini</p>
+                </div>
+                <button onclick="logout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Keluar</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Menu Laporan Kinerja -->
+                <button onclick="navigateTo('page-laporan')" class="p-6 bg-white hover:bg-amber-50/50 border-2 border-gray-100 hover:border-amber-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer">
+                    <div class="w-12 h-12 bg-[#d4af37] text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-file-invoice"></i></div>
+                    <h3 class="text-lg font-bold text-gray-800 mt-4">Laporan Kinerja</h3>
+                    <p class="text-xs text-gray-500 mt-1">Laporan harian, bulanan, rencana kinerja, dan absensi bulanan.</p>
+                </button>
+
+                <!-- Menu TPG -->
+                <button onclick="navigateTo('page-tpg')" class="p-6 bg-white hover:bg-emerald-50/50 border-2 border-gray-100 hover:border-emerald-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer">
+                    <div class="w-12 h-12 bg-[#016b39] text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h3 class="text-lg font-bold text-gray-800 mt-4">TPG (Tunjangan Profesi Guru)</h3>
+                    <p class="text-xs text-gray-500 mt-1">Pengunggahan berkas sertifikasi profesi guru kualifikasi khusus.</p>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ================= HALAMAN 4: LAPORAN KINERJA ================= -->
+        <section id="page-laporan" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
+            <div class="flex items-center space-x-3 mb-6">
+                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-2xl font-bold text-[#016b39]">Laporan Kinerja</h2>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Tahun</label>
+                    <select class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"><option>2026</option></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Bulan</label>
+                    <select class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"><option>Juni</option></select>
+                </div>
+            </div>
+
+            <!-- List Upload Form Berkas -->
+            <div class="space-y-4">
+                
+                <!-- Berkas 1 -->
+                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-gray-700 text-sm">Laporan Kinerja Harian</h3>
+                        <input type="file" id="input-lapor-harian" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="status-lapor-harian" class="text-right min-w-[150px]">
+                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                        </div>
+                        <button onclick="uploadProses('input-lapor-harian', 'Laporan Kinerja', 'Laporan Kinerja Harian', 'status-lapor-harian')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                    </div>
+                </div>
+
+                <!-- Berkas 2 -->
+                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-gray-700 text-sm">Laporan Kinerja Bulanan</h3>
+                        <input type="file" id="input-lapor-bulanan" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="status-lapor-bulanan" class="text-right min-w-[150px]">
+                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                        </div>
+                        <button onclick="uploadProses('input-lapor-bulanan', 'Laporan Kinerja', 'Laporan Kinerja Bulanan', 'status-lapor-bulanan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                    </div>
+                </div>
+
+                <!-- Berkas 3 -->
+                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-gray-700 text-sm">Rencana Kinerja Bulanan</h3>
+                        <input type="file" id="input-rencana-bulan" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="status-rencana-bulan" class="text-right min-w-[150px]">
+                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                        </div>
+                        <button onclick="uploadProses('input-rencana-bulan', 'Laporan Kinerja', 'Rencana Kinerja Bulanan', 'status-rencana-bulan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                    </div>
+                </div>
+
+                <!-- Berkas 4 -->
+                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-gray-700 text-sm">Laporan Absensi Bulanan</h3>
+                        <input type="file" id="input-absensi" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="status-absensi" class="text-right min-w-[150px]">
+                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                        </div>
+                        <button onclick="uploadProses('input-absensi', 'Laporan Kinerja', 'Laporan Absensi Bulanan', 'status-absensi')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-xs text-red-800 space-y-1">
+                    <span class="font-bold uppercase block text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Warning:</span>
+                    <p>1. Berkas tidak salah upload. 2. Hasil scan/foto harus jelas. 3. Berkas telah ditandatangani.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= HALAMAN 5: TPG ================= -->
+        <section id="page-tpg" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
+            <div class="flex items-center space-x-3 mb-6">
+                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 class="text-2xl font-bold text-[#016b39]">Tunjangan Profesi Guru (TPG)</h2>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mb-6 bg-gray-50 p-4 rounded-xl">
+                <div><label class="block text-xs text-gray-500 mb-1">Tahun</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>2026</option></select></div>
+                <div><label class="block text-xs text-gray-500 mb-1">Bulan</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>Juni</option></select></div>
+                <div><label class="block text-xs text-gray-500 mb-1">Jenis TPG</label><select class="w-full p-2 bg-white rounded-lg text-xs"><option>TPG MADRASAH</option><option>TPG PPPK</option><option>TPG PAI</option></select></div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="p-6 border border-gray-200 rounded-2xl bg-gray-50/50 md:flex md:items-center md:justify-between">
+                    <div>
+                        <span class="block text-sm font-bold text-gray-700 mb-1">Upload Berkas Persyaratan TPG (.pdf)</span>
+                        <input type="file" id="input-berkas-tpg" class="block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                    </div>
+                    <div class="flex items-center space-x-2 mt-3 md:mt-0">
+                        <div id="status-tpg-main" class="min-w-[150px] text-right">
+                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                        </div>
+                        <button onclick="uploadProses('input-berkas-tpg', 'TPG', 'Berkas Persyaratan TPG', 'status-tpg-main')" class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Upload</button>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-xs text-red-800">
+                    <span class="font-bold uppercase block text-red-600 mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Perhatian Penting:</span>
+                    <p>Pastikan berkas telah divalidasi resmi sebelum diunggah ke sistem utama.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER ASSISTANCE -->
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500 space-y-3">
+        <div class="inline-flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-full">
+            <i class="fa-brands fa-whatsapp text-emerald-600 text-lg"></i>
+            <span class="text-emerald-800 font-medium">Jika terdapat masalah silahkan klik <a href="https://wa.me/#" target="_blank" class="font-bold underline">Halo Murni</a></span>
+        </div>
+        <p>&copy; 2026 Copyright by <strong>Murniati Rahmatullah</strong>. All Rights Reserved.</p>
+    </footer>
+
+    <!-- LOGIKAL INTERAKTIF JAVASCRIPT -->
+    <script>
+        // TAUTKAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA DI SINI
+        const API_URL = "https://script.google.com/macros/s/AKfycbxS6gvfr2o_vN_Nw6EjA4LsOPXbKe78TGv7byWinMvNd6g1njjJhvRXrPqk6GYSqQjEdg/exec";
+
+        // Global State User
+        let currentUser = null;
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleLoader(show, text = "") {
+            const overlay = document.getElementById('loading-overlay');
+            document.getElementById('loading-text').innerText = text;
+            if(show) overlay.classList.remove('hidden');
+            else overlay.classList.add('hidden');
+        }
+
+        // AKSI REGISTRASI KE SPREADSHEET
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const nama = document.getElementById('reg-nama').value;
+            const hp = document.getElementById('reg-hp').value;
+            const email = document.getElementById('reg-email').value;
+            const nip = document.getElementById('reg-nip').value;
+            const pass = document.getElementById('reg-pass').value;
+            const pass2 = document.getElementById('reg-pass2').value;
+
+            if (pass !== pass2) {
+                alert('Konfirmasi password tidak cocok!');
+                return;
+            }
+
+            toggleLoader(true, "Mendaftarkan akun & membuat Cloud Sheet Anda...");
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'register', nama, hp, email, nip, password: pass })
+                });
+                const result = await response.json();
+
+                if (result.status === "SUCCESS") {
+                    alert('Registrasi Berhasil! Sheet data Pribadi Anda telah dibuat di database.');
+                    document.getElementById('page-register').querySelector('form').reset();
+                    navigateTo('page-login');
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan jaringan atau skrip API salah.');
+                console.error(error);
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        // AKSI LOGIN DENGAN VALIDASI SPREADSHEET
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const nip = document.getElementById('login-nip').value;
+            const pass = document.getElementById('login-pass').value;
+
+            toggleLoader(true, "Membuka enkripsi data & mencocokkan NIP...");
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', nip, password: pass })
+                });
+                const result = await response.json();
+
+                if (result.status === "SUCCESS") {
+                    currentUser = result.user;
+                    document.getElementById('txt-welcome-user').innerText = `Hallo ${currentUser.nama} (NIP: ${currentUser.nip})`;
+                    
+                    // Render status upload berdasarkan riwayat yang ditarik dari Cloud Sheet pribadi
+                    renderHistoryStatus(result.history);
+                    
+                    navigateTo('page-dashboard');
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Gagal terhubung ke database cloud.');
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        // MEMETAKAN BERKAS YANG SUDAH PERNAH DIUPLOAD SEBELUMNYA
+        function renderHistoryStatus(historyList) {
+            // Mapping ID berkas di web berdasarkan nama tipe berkas di Google Sheet
+            const mapping = {
+                'Laporan Kinerja Harian': 'status-lapor-harian',
+                'Laporan Kinerja Bulanan': 'status-lapor-bulanan',
+                'Rencana Kinerja Bulanan': 'status-rencana-bulan',
+                'Laporan Absensi Bulanan': 'status-absensi',
+                'Berkas Persyaratan TPG': 'status-tpg-main'
+            };
+
+            let adaUploadHariIni = false;
+
+            historyList.forEach(item => {
+                const elementId = mapping[item.namaBerkas];
+                if (elementId) {
+                    document.getElementById(elementId).innerHTML = `
+                        <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
+                            <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${item.link}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
+                        </span>`;
+                }
+                
+                // Cek apakah tanggal upload adalah hari ini (pencocokan sederhana berbasis string tanggal)
+                const todayStr = new Date().toISOString().split('T')[0];
+                if(item.tanggal && item.tanggal.includes(todayStr)){
+                    adaUploadHariIni = true;
+                }
+            });
+
+            if (adaUploadHariIni) {
+                setKalenderHijau();
+            }
+        }
+
+        function setKalenderHijau() {
+            const targetCell = document.getElementById('today-calendar-cell');
+            targetCell.className = "bg-emerald-600 text-white p-2.5 rounded-lg border-2 border-emerald-400";
+            document.getElementById('calendar-status-badge').className = "text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold";
+            document.getElementById('calendar-status-badge').innerText = "Berkas Sukses Terkirim Hari Ini";
+        }
+
+        // PROSES UPLOAD FILE BASE64 KE GDRIVE & INPUT DATA KE SHEET USER
+        function uploadProses(inputId, layanan, berkasType, statusDivId) {
+            const fileInput = document.getElementById(inputId);
+            if (fileInput.files.length === 0) {
+                alert('Pilih file terlebih dahulu sebelum menekan tombol upload!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            toggleLoader(true, `Mengirim file "${file.name}" ke Google Drive Anda...`);
+
+            reader.onload = async function(e) {
+                const fileData = e.target.result;
+                
+                const payload = {
+                    action: 'upload',
+                    sheetName: currentUser.sheetName,
+                    layanan: layanan,
+                    berkasType: berkasType,
+                    fileName: file.name,
+                    fileData: fileData
+                };
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.status === "SUCCESS") {
+                        alert(`Berkas "${berkasType}" berhasil disimpan di Google Drive.`);
+                        
+                        // Perbarui tampilan status baris formulir tersebut menjadi hijau secara langsung
+                        document.getElementById(statusDivId).innerHTML = `
+                            <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
+                                <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${result.fileUrl}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
+                            </span>`;
+                        
+                        // Warnai Kalender Menjadi Hijau
+                        setKalenderHijau();
+                    } else {
+                        alert('Gagal Upload: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Terjadi kesalahan koneksi saat mencoba mengunggah.');
+                } finally {
+                    toggleLoader(false);
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('page-login').querySelector('form').reset();
+            
+            // Kembalikan semua indikator berkas ke merah semula saat logout
+            const statusIds = ['status-lapor-harian', 'status-lapor-bulanan', 'status-rencana-bulan', 'status-absensi', 'status-tpg-main'];
+            statusIds.forEach(id => {
+                document.getElementById(id).innerHTML = `<span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>`;
+            });
+            
+            // Kembalikan kalender ke kuning/normal semula
+            document.getElementById('today-calendar-cell').className = "bg-amber-100 text-amber-800 p-2.5 rounded-lg border-2 border-amber-400 animate-pulse";
+            document.getElementById('calendar-status-badge').className = "text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold";
+            document.getElementById('calendar-status-badge').innerText = "Belum Ada Berkas Dikirim";
+
+            navigateTo('page-login');
+        }
+    </script>
+</body>
+</html>
