@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,32 +11,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f7f5;
         }
+
         .islamic-pattern {
             background-color: #ffffff;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%2016b39' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
-        .page { 
-            display: none; 
+
+        .page {
+            display: none;
             opacity: 0;
             transform: translateY(12px);
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
-        .page.active { 
-            display: block; 
+
+        .page.active {
+            display: block;
             opacity: 1;
             transform: translateY(0);
         }
+
         .loader {
             border-top-color: #016b39;
             animation: spinner 1.5s linear infinite;
         }
+
         @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Toast Notification */
@@ -48,6 +60,7 @@
             flex-direction: column;
             gap: 10px;
         }
+
         .toast {
             min-width: 320px;
             max-width: 420px;
@@ -59,31 +72,75 @@
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
             animation: toastSlideIn 0.4s ease forwards;
             backdrop-filter: blur(10px);
         }
-        .toast.toast-success { background: linear-gradient(135deg, #016b39, #059669); }
-        .toast.toast-error { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-        .toast.toast-warning { background: linear-gradient(135deg, #d97706, #b45309); }
-        .toast.toast-info { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+
+        .toast.toast-success {
+            background: linear-gradient(135deg, #016b39, #059669);
+        }
+
+        .toast.toast-error {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .toast.toast-warning {
+            background: linear-gradient(135deg, #d97706, #b45309);
+        }
+
+        .toast.toast-info {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
         .toast-exit {
             animation: toastSlideOut 0.35s ease forwards;
         }
+
         @keyframes toastSlideIn {
-            from { opacity: 0; transform: translateX(60px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
         @keyframes toastSlideOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(60px); }
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(60px);
+            }
         }
-        .toast i { font-size: 18px; margin-top: 1px; }
-        .toast .toast-msg { flex: 1; line-height: 1.5; }
+
+        .toast i {
+            font-size: 18px;
+            margin-top: 1px;
+        }
+
+        .toast .toast-msg {
+            flex: 1;
+            line-height: 1.5;
+        }
+
         .toast .toast-close {
-            cursor: pointer; opacity: 0.7; font-size: 14px; margin-top: 1px;
+            cursor: pointer;
+            opacity: 0.7;
+            font-size: 14px;
+            margin-top: 1px;
         }
-        .toast .toast-close:hover { opacity: 1; }
+
+        .toast .toast-close:hover {
+            opacity: 1;
+        }
 
         /* Calendar styles */
         .cal-day {
@@ -99,38 +156,53 @@
             cursor: default;
             position: relative;
         }
+
         .cal-day.today {
             border: 2px solid #d4af37;
             background: #fffbeb;
             color: #92400e;
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            50% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(212, 175, 55, 0);
+            }
         }
+
         .cal-day.uploaded {
             background: linear-gradient(135deg, #059669, #016b39);
             color: white;
             border: 2px solid #047857;
             box-shadow: 0 2px 8px rgba(1, 107, 57, 0.3);
         }
+
         .cal-day.uploaded.today {
             border: 2px solid #d4af37;
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3), 0 2px 8px rgba(1, 107, 57, 0.3);
         }
+
         .cal-day.empty {
             background: transparent;
             cursor: default;
         }
+
         .cal-day.past {
             background: #f3f4f6;
             color: #9ca3af;
         }
+
         .cal-day.future {
             background: #f9fafb;
             color: #6b7280;
         }
+
         .cal-day .cal-check {
             font-size: 8px;
             position: absolute;
@@ -141,8 +213,184 @@
         .page-entering {
             display: block !important;
         }
+
+        /* Preview Confirmation Modal */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: confirmFadeIn 0.25s ease;
+        }
+
+        .confirm-overlay.show {
+            display: flex;
+        }
+
+        @keyframes confirmFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .confirm-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: confirmSlideUp 0.3s ease;
+        }
+
+        @keyframes confirmSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .confirm-preview-area {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .confirm-preview-area iframe {
+            width: 100%;
+            height: 280px;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .confirm-preview-area img {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+        }
+
+        .confirm-checklist label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .confirm-checklist label:has(input:checked) {
+            border-color: #059669;
+            background: #ecfdf5;
+        }
+
+        .confirm-checklist input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #016b39;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .btn-confirm-upload {
+            transition: all 0.2s ease;
+        }
+
+        .btn-confirm-upload:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Calendar clickable uploaded days */
+        .cal-day.uploaded {
+            cursor: pointer;
+        }
+
+        .cal-day.uploaded:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 14px rgba(1, 107, 57, 0.45);
+            z-index: 2;
+        }
+
+        /* Calendar Detail Modal items */
+        .cal-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: #f9fafb;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .cal-detail-item:hover {
+            border-color: #059669;
+            background: #ecfdf5;
+        }
+
+        /* Pimpinan Dashboard Table */
+        .pimpinan-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12px;
+        }
+
+        .pimpinan-table th {
+            background: #016b39;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        .pimpinan-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .pimpinan-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .pimpinan-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        .pimpinan-table tr:hover td {
+            background: #f0fdf4;
+        }
     </style>
 </head>
+
 <body class="islamic-pattern min-h-screen flex flex-col justify-between">
 
     <!-- TOAST CONTAINER -->
@@ -154,13 +402,129 @@
         <p class="text-white font-semibold text-sm" id="loading-text">Memproses ke sistem cloud...</p>
     </div>
 
+    <!-- MODAL KONFIRMASI PREVIEW SEBELUM UPLOAD -->
+    <div id="confirm-upload-modal" class="confirm-overlay">
+        <div class="confirm-modal">
+            <!-- Header -->
+            <div class="p-5 pb-3 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass-plus text-amber-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-800">Periksa Berkas Anda</h3>
+                            <p class="text-xs text-gray-500">Pastikan file sudah benar sebelum dikirim</p>
+                        </div>
+                    </div>
+                    <button onclick="closeConfirmModal()"
+                        class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 cursor-pointer transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Info -->
+            <div class="px-5 pt-4">
+                <div class="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-xl mb-4">
+                    <i class="fa-solid fa-file-lines text-blue-600 text-lg"></i>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-blue-800 truncate" id="confirm-file-name">nama-file.pdf</p>
+                        <p class="text-[11px] text-blue-600">
+                            <span id="confirm-file-size">0 KB</span> &bull;
+                            <span id="confirm-file-type">PDF</span> &bull;
+                            Kategori: <strong id="confirm-berkas-type">Laporan</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="px-5">
+                <p class="text-xs font-semibold text-gray-600 mb-2">
+                    <i class="fa-solid fa-eye mr-1"></i>Pratinjau Berkas:
+                </p>
+                <div class="confirm-preview-area" id="confirm-preview-container">
+                    <p class="text-sm text-gray-400"><i class="fa-solid fa-file-circle-question mr-1"></i>Tidak dapat
+                        ditampilkan</p>
+                </div>
+            </div>
+
+            <!-- Checklist Verifikasi -->
+            <div class="px-5 pt-4">
+                <div class="bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
+                    <p class="text-xs font-bold text-red-700">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                        WAJIB dicentang sebelum mengirim berkas!
+                    </p>
+                </div>
+                <div class="confirm-checklist space-y-2">
+                    <label>
+                        <input type="checkbox" id="chk-ttd" onchange="updateConfirmBtn()">
+                        <span>Berkas sudah <strong>ditandatangani</strong> (tanda tangan basah/digital) oleh
+                            pejabat/pihak yang berwenang.</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="chk-file-type" onchange="updateConfirmBtn()">
+                        <span>Jenis file dan isi berkas <strong>sudah sesuai</strong> dengan kategori yang dipilih.
+                            Hasil scan/foto <strong>terlihat jelas</strong>.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="p-5 flex gap-3">
+                <button onclick="closeConfirmModal()"
+                    class="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-semibold text-sm cursor-pointer hover:bg-gray-200 transition-colors">
+                    <i class="fa-solid fa-arrow-left mr-1"></i>Batal
+                </button>
+                <button id="btn-confirm-upload" onclick="executeUpload()" disabled
+                    class="btn-confirm-upload flex-1 py-2.5 bg-[#016b39] text-white rounded-xl font-semibold text-sm cursor-pointer hover:bg-emerald-800 transition-colors">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i>Kirim Berkas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL KALENDER -->
+    <div id="calendar-detail-modal" class="confirm-overlay">
+        <div class="confirm-modal">
+            <!-- Header -->
+            <div class="p-5 pb-3 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-calendar-day text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-800">Detail Upload</h3>
+                            <p class="text-xs text-gray-500" id="cal-detail-date">1 Januari 2026</p>
+                        </div>
+                    </div>
+                    <button onclick="closeCalendarDetail()"
+                        class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 cursor-pointer transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Upload List -->
+            <div class="p-5 space-y-3" id="cal-detail-list">
+                <p class="text-center text-gray-400 text-sm py-4"><i class="fa-solid fa-inbox mr-1"></i>Tidak ada data
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- HEADER UTAMA -->
     <header class="bg-white shadow-sm border-b-4 border-[#d4af37] p-4">
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
             <!-- Logo Kemenag Kiri -->
             <div class="flex items-center justify-center">
-                <img src="Logo Kemenag.png" alt="Logo Kemenag" class="w-14 h-14 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div style="display:none;" class="w-14 h-14 bg-[#016b39] rounded-full flex items-center justify-center text-white font-bold text-[10px] text-center p-1 border-2 border-[#d4af37]">KEMENAG</div>
+                <img src="Logo Kemenag.png" alt="Logo Kemenag" class="w-14 h-14 object-contain"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display:none;"
+                    class="w-14 h-14 bg-[#016b39] rounded-full flex items-center justify-center text-white font-bold text-[10px] text-center p-1 border-2 border-[#d4af37]">
+                    KEMENAG</div>
             </div>
 
             <!-- TEKS JUDUL TENGAH -->
@@ -171,8 +535,11 @@
 
             <!-- Logo Pendis Kanan -->
             <div class="flex items-center justify-center">
-                <img src="Logo Pendis.png" alt="Logo Pendis" class="h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span style="display:none;" class="text-sm font-bold text-[#016b39] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Seksi Pendis Minahasa</span>
+                <img src="Logo Pendis.png" alt="Logo Pendis" class="h-12 object-contain"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none;"
+                    class="text-sm font-bold text-[#016b39] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Seksi
+                    Pendis Minahasa</span>
             </div>
         </div>
     </header>
@@ -180,7 +547,8 @@
     <main class="max-w-4xl w-full mx-auto p-4 flex-grow flex flex-col justify-center my-6">
 
         <!-- ================= HALAMAN 1: LOGIN ================= -->
-        <section id="page-login" class="page active bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md mx-auto w-full text-center">
+        <section id="page-login"
+            class="page active bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md mx-auto w-full text-center">
             <div class="mb-6">
                 <i class="fa-solid fa-mosque text-4xl text-[#d4af37] mb-2"></i>
                 <h2 class="text-2xl font-bold text-[#016b39]">Ahlan wa Sahlan</h2>
@@ -192,35 +560,50 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <i class="fa-solid fa-id-card"></i>
                     </span>
-                    <input type="text" id="login-nip" placeholder="NIP / Nomor Identitas" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]" required>
+                    <input type="text" id="login-nip" placeholder="NIP / Nomor Identitas"
+                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]"
+                        required>
                 </div>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
-                    <input type="password" id="login-pass" placeholder="Password" class="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]" required>
-                    <button type="button" onclick="togglePasswordVisibility('login-pass', this)" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
+                    <input type="password" id="login-pass" placeholder="Password"
+                        class="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]"
+                        required>
+                    <button type="button" onclick="togglePasswordVisibility('login-pass', this)"
+                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
                         <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
-                <button type="submit" class="w-full bg-[#016b39] text-white py-3 rounded-xl font-semibold shadow-md hover:bg-emerald-800 cursor-pointer transition-colors">
+                <button type="submit"
+                    class="w-full bg-[#016b39] text-white py-3 rounded-xl font-semibold shadow-md hover:bg-emerald-800 cursor-pointer transition-colors">
                     Masuk Aplikasi
                 </button>
             </form>
 
             <div class="mt-6 pt-4 border-t border-gray-100 space-y-3 text-sm">
-                <p class="text-gray-600">Belum Punya Akun? 
-                    <button onclick="navigateTo('page-register')" class="text-[#016b39] font-bold hover:underline cursor-pointer">Daftar Di Sini</button>
+                <p class="text-gray-600">Belum Punya Akun?
+                    <button onclick="navigateTo('page-register')"
+                        class="text-[#016b39] font-bold hover:underline cursor-pointer">Daftar Di Sini</button>
                 </p>
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-center justify-center space-x-2">
+                <div
+                    class="bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-circle-info text-amber-600"></i>
-                    <p class="text-xs text-amber-800 text-left">Lupa Password? Silahkan hubungi <a href="https://wa.me/6282187439224" target="_blank" class="font-bold underline text-emerald-800 hover:text-emerald-950">Halo Murni</a></p>
+                    <p class="text-xs text-amber-800 text-left">Lupa Password? Silahkan hubungi <a
+                            href="https://wa.me/6282187439224" target="_blank"
+                            class="font-bold underline text-emerald-800 hover:text-emerald-950">Halo Murni</a></p>
                 </div>
+                <button onclick="navigateTo('page-pimpinan-login')"
+                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-semibold text-sm cursor-pointer transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-shield text-[#d4af37]"></i>Masuk sebagai Pimpinan
+                </button>
             </div>
         </section>
 
         <!-- ================= HALAMAN 2: REGISTER ================= -->
-        <section id="page-register" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-xl mx-auto w-full">
+        <section id="page-register"
+            class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-xl mx-auto w-full">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-[#016b39]">Formulir Registrasi</h2>
                 <p class="text-sm text-gray-500">Lengkapi data administrasi Pendis Anda</p>
@@ -229,30 +612,38 @@
             <form onsubmit="handleRegisterSubmit(event);" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Lengkap (Minimal 2 kata)</label>
-                    <input type="text" id="reg-nama" placeholder="Contoh: Murniati Rahmatullah" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                    <input type="text" id="reg-nama" placeholder="Contoh: Murniati Rahmatullah"
+                        class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">No. HP (WhatsApp)</label>
-                    <input type="tel" id="reg-hp" placeholder="Contoh: 081234567890" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                    <input type="tel" id="reg-hp" placeholder="Contoh: 081234567890"
+                        class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Email Aktif</label>
-                    <input type="email" id="reg-email" placeholder="Contoh: nama@domain.com" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                    <input type="email" id="reg-email" placeholder="Contoh: nama@domain.com"
+                        class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-red-600 mb-1">NIP (Wajib) *</label>
-                    <input type="text" id="reg-nip" maxlength="18" placeholder="Contoh: 198207122009012002" inputmode="numeric" class="w-full p-2.5 bg-gray-50 border border-red-200 rounded-lg focus:outline-none focus:border-[#016b39]" required>
+                    <input type="text" id="reg-nip" maxlength="18" placeholder="Contoh: 198207122009012002"
+                        inputmode="numeric"
+                        class="w-full p-2.5 bg-gray-50 border border-red-200 rounded-lg focus:outline-none focus:border-[#016b39]"
+                        required>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Kelamin</label>
-                    <select id="reg-jk" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none">
+                    <select id="reg-jk"
+                        class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none">
                         <option>Laki-laki</option>
                         <option>Perempuan</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Status Kepegawaian</label>
-                    <select id="reg-status" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none">
+                    <select id="reg-status"
+                        class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none">
                         <option>PNS</option>
                         <option>PPPK</option>
                         <option>Honor</option>
@@ -260,13 +651,17 @@
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Asal Sekolah / Madrasah</label>
-                    <input type="text" id="reg-sekolah" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
+                    <input type="text" id="reg-sekolah"
+                        class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="reg-pass" class="w-full p-2.5 pr-10 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
-                        <button type="button" onclick="togglePasswordVisibility('reg-pass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
+                        <input type="password" id="reg-pass"
+                            class="w-full p-2.5 pr-10 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
+                            required>
+                        <button type="button" onclick="togglePasswordVisibility('reg-pass', this)"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -274,71 +669,86 @@
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Ulangi Password</label>
                     <div class="relative">
-                        <input type="password" id="reg-pass2" class="w-full p-2.5 pr-10 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none" required>
-                        <button type="button" onclick="togglePasswordVisibility('reg-pass2', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
+                        <input type="password" id="reg-pass2"
+                            class="w-full p-2.5 pr-10 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
+                            required>
+                        <button type="button" onclick="togglePasswordVisibility('reg-pass2', this)"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- KAMERA & VERIFIKASI WAJAH (WAJIB ISI) -->
                 <div class="md:col-span-2 bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center space-y-3">
                     <label class="block text-sm font-bold text-[#016b39] mb-1">
-                        <i class="fa-solid fa-face-smile mr-2"></i>Verifikasi Scan Wajah <span class="text-red-600">(Wajib) *</span>
+                        <i class="fa-solid fa-face-smile mr-2"></i>Verifikasi Scan Wajah <span
+                            class="text-red-600">(Wajib) *</span>
                     </label>
-                    
+
                     <!-- Area Kamera Hidup -->
-                    <div id="camera-box" class="hidden max-w-xs mx-auto overflow-hidden rounded-lg border-2 border-[#016b39] bg-black">
+                    <div id="camera-box"
+                        class="hidden max-w-xs mx-auto overflow-hidden rounded-lg border-2 border-[#016b39] bg-black">
                         <video id="webcam-stream" autoplay playsinline class="w-full h-auto scale-x-[-1]"></video>
                     </div>
 
                     <!-- Tempat Pratinjau Foto yang diambil -->
-                    <div id="preview-box" class="hidden max-w-xs mx-auto overflow-hidden rounded-lg border-2 border-amber-400 bg-gray-100">
+                    <div id="preview-box"
+                        class="hidden max-w-xs mx-auto overflow-hidden rounded-lg border-2 border-amber-400 bg-gray-100">
                         <img id="face-photo-preview" src="" class="w-full h-auto">
                     </div>
 
                     <div class="flex justify-center gap-2">
-                        <button type="button" id="btn-start-camera" onclick="startCamera()" class="bg-white border border-[#016b39] text-[#016b39] px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+                        <button type="button" id="btn-start-camera" onclick="startCamera()"
+                            class="bg-white border border-[#016b39] text-[#016b39] px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
                             <i class="fa-solid fa-camera mr-1"></i>Aktifkan Kamera
                         </button>
-                        <button type="button" id="btn-capture-photo" onclick="capturePhoto()" class="hidden bg-amber-500 text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+                        <button type="button" id="btn-capture-photo" onclick="capturePhoto()"
+                            class="hidden bg-amber-500 text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
                             <i class="fa-solid fa-circle-dot mr-1"></i>Ambil Foto
                         </button>
                     </div>
-                    
+
                     <!-- Element penyimpan string gambar sementara (tidak terlihat) -->
                     <input type="hidden" id="reg-foto-wajah" required>
                     <canvas id="camera-canvas" class="hidden"></canvas>
                 </div>
 
                 <div class="md:col-span-2 flex space-x-2 pt-2">
-                    <button type="submit" class="flex-1 bg-[#016b39] text-white py-2.5 rounded-xl font-semibold shadow-md cursor-pointer hover:bg-emerald-800 transition-colors">Daftar Akun</button>
-                    <button type="button" onclick="stopCamera(); navigateTo('page-login')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer hover:bg-gray-200 transition-colors">Kembali Login</button>
+                    <button type="submit"
+                        class="flex-1 bg-[#016b39] text-white py-2.5 rounded-xl font-semibold shadow-md cursor-pointer hover:bg-emerald-800 transition-colors">Daftar
+                        Akun</button>
+                    <button type="button" onclick="stopCamera(); navigateTo('page-login')"
+                        class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold cursor-pointer hover:bg-gray-200 transition-colors">Kembali
+                        Login</button>
                 </div>
             </form>
         </section>
 
         <!-- ================= HALAMAN 3: DASHBOARD UTAMA ================= -->
         <section id="page-dashboard" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
-            
+
             <!-- KALENDER DINAMIS BULANAN -->
             <div class="mb-6 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100">
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider">
                         <i class="fa-solid fa-calendar-check mr-1"></i> Kalender Progres Upload
                     </h4>
-                    <span id="calendar-status-badge" class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-bold">
+                    <span id="calendar-status-badge"
+                        class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-bold">
                         Belum Ada Berkas Dikirim
                     </span>
                 </div>
 
                 <!-- Calendar Navigation -->
                 <div class="flex items-center justify-between mb-3">
-                    <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-all">
+                    <button onclick="changeCalendarMonth(-1)"
+                        class="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-all">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
                     </button>
                     <h5 id="calendar-month-title" class="text-sm font-bold text-[#016b39]"></h5>
-                    <button onclick="changeCalendarMonth(1)" class="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-all">
+                    <button onclick="changeCalendarMonth(1)"
+                        class="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-all">
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
                 </div>
@@ -361,9 +771,14 @@
 
                 <!-- Calendar Legend -->
                 <div class="flex items-center justify-center gap-4 mt-3 text-[10px] text-gray-500">
-                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gradient-to-br from-emerald-600 to-emerald-800 inline-block"></span> Upload Berhasil</span>
-                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-100 border border-amber-400 inline-block"></span> Hari Ini</span>
-                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-200 inline-block"></span> Belum Upload</span>
+                    <span class="flex items-center gap-1"><span
+                            class="w-3 h-3 rounded bg-gradient-to-br from-emerald-600 to-emerald-800 inline-block"></span>
+                        Upload Berhasil</span>
+                    <span class="flex items-center gap-1"><span
+                            class="w-3 h-3 rounded bg-amber-100 border border-amber-400 inline-block"></span> Hari
+                        Ini</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-200 inline-block"></span>
+                        Belum Upload</span>
                 </div>
             </div>
 
@@ -372,20 +787,31 @@
                     <h2 class="text-2xl font-bold text-[#016b39]" id="txt-welcome-user">Hallo User...</h2>
                     <p class="text-sm text-gray-500">Silahkan pilih layanan administrasi di bawah ini</p>
                 </div>
-                <button onclick="logout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-red-100 transition-colors">Keluar</button>
+                <button onclick="logout()"
+                    class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-red-100 transition-colors">Keluar</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button onclick="navigateTo('page-laporan')" class="p-6 bg-white hover:bg-amber-50/50 border-2 border-gray-100 hover:border-amber-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer group">
-                    <div class="w-12 h-12 bg-[#d4af37] text-white rounded-xl flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-invoice"></i></div>
+                <button onclick="navigateTo('page-laporan')"
+                    class="p-6 bg-white hover:bg-amber-50/50 border-2 border-gray-100 hover:border-amber-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer group">
+                    <div
+                        class="w-12 h-12 bg-[#d4af37] text-white rounded-xl flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
                     <h3 class="text-lg font-bold text-gray-800 mt-4">Laporan Kinerja</h3>
-                    <p class="text-xs text-gray-500 mt-1">Laporan harian, bulanan, rencana kinerja, dan absensi bulanan.</p>
+                    <p class="text-xs text-gray-500 mt-1">Laporan harian, bulanan, rencana kinerja, dan absensi bulanan.
+                    </p>
                 </button>
 
-                <button onclick="navigateTo('page-tpg')" class="p-6 bg-white hover:bg-emerald-50/50 border-2 border-gray-100 hover:border-emerald-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer group">
-                    <div class="w-12 h-12 bg-[#016b39] text-white rounded-xl flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform"><i class="fa-solid fa-graduation-cap"></i></div>
+                <button onclick="navigateTo('page-tpg')"
+                    class="p-6 bg-white hover:bg-emerald-50/50 border-2 border-gray-100 hover:border-emerald-200 rounded-2xl text-left transition-all shadow-sm cursor-pointer group">
+                    <div
+                        class="w-12 h-12 bg-[#016b39] text-white rounded-xl flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
                     <h3 class="text-lg font-bold text-gray-800 mt-4">TPG (Tunjangan Profesi Guru)</h3>
-                    <p class="text-xs text-gray-500 mt-1">Pengunggahan berkas sertifikasi profesi guru kualifikasi khusus.</p>
+                    <p class="text-xs text-gray-500 mt-1">Pengunggahan berkas sertifikasi profesi guru kualifikasi
+                        khusus.</p>
                 </button>
             </div>
         </section>
@@ -393,76 +819,105 @@
         <!-- ================= HALAMAN 4: LAPORAN KINERJA ================= -->
         <section id="page-laporan" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
             <div class="flex items-center space-x-3 mb-6">
-                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
+                <button onclick="navigateTo('page-dashboard')"
+                    class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition-colors"><i
+                        class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="text-2xl font-bold text-[#016b39]">Laporan Kinerja</h2>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Tahun</label>
-                    <select id="laporan-tahun" class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
+                    <select id="laporan-tahun"
+                        class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Bulan</label>
-                    <select id="laporan-bulan" class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
+                    <select id="laporan-bulan"
+                        class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
                 </div>
             </div>
 
             <div class="space-y-4">
-                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                <div
+                    class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Laporan Kinerja Harian</h3>
-                        <input type="file" id="input-lapor-harian" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                        <input type="file" id="input-lapor-harian"
+                            class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
                     </div>
                     <div class="flex items-center space-x-2">
                         <div id="status-lapor-harian" class="text-right min-w-[150px]">
-                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                            <span
+                                class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i
+                                    class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-lapor-harian', 'Laporan Kinerja', 'Laporan Kinerja Harian', 'status-lapor-harian')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
+                        <button
+                            onclick="uploadProses('input-lapor-harian', 'Laporan Kinerja', 'Laporan Kinerja Harian', 'status-lapor-harian')"
+                            class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
-                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                <div
+                    class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Laporan Kinerja Bulanan</h3>
-                        <input type="file" id="input-lapor-bulanan" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                        <input type="file" id="input-lapor-bulanan"
+                            class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
                     </div>
                     <div class="flex items-center space-x-2">
                         <div id="status-lapor-bulanan" class="text-right min-w-[150px]">
-                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                            <span
+                                class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i
+                                    class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-lapor-bulanan', 'Laporan Kinerja', 'Laporan Kinerja Bulanan', 'status-lapor-bulanan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
+                        <button
+                            onclick="uploadProses('input-lapor-bulanan', 'Laporan Kinerja', 'Laporan Kinerja Bulanan', 'status-lapor-bulanan')"
+                            class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
-                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                <div
+                    class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Rencana Kinerja Bulanan</h3>
-                        <input type="file" id="input-rencana-bulan" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                        <input type="file" id="input-rencana-bulan"
+                            class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
                     </div>
                     <div class="flex items-center space-x-2">
                         <div id="status-rencana-bulan" class="text-right min-w-[150px]">
-                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                            <span
+                                class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i
+                                    class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-rencana-bulan', 'Laporan Kinerja', 'Rencana Kinerja Bulanan', 'status-rencana-bulan')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
+                        <button
+                            onclick="uploadProses('input-rencana-bulan', 'Laporan Kinerja', 'Rencana Kinerja Bulanan', 'status-rencana-bulan')"
+                            class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
-                <div class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
+                <div
+                    class="p-4 border border-gray-200 rounded-xl md:flex md:items-center md:justify-between space-y-3 md:space-y-0">
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-700 text-sm">Laporan Absensi Bulanan</h3>
-                        <input type="file" id="input-absensi" class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                        <input type="file" id="input-absensi"
+                            class="block w-full text-xs text-gray-500 mt-1 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
                     </div>
                     <div class="flex items-center space-x-2">
                         <div id="status-absensi" class="text-right min-w-[150px]">
-                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                            <span
+                                class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i
+                                    class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-absensi', 'Laporan Kinerja', 'Laporan Absensi Bulanan', 'status-absensi')" class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
+                        <button
+                            onclick="uploadProses('input-absensi', 'Laporan Kinerja', 'Laporan Absensi Bulanan', 'status-absensi')"
+                            class="bg-[#016b39] text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
                 <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-xs text-red-800 space-y-1">
-                    <span class="font-bold uppercase block text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Warning:</span>
+                    <span class="font-bold uppercase block text-red-600"><i
+                            class="fa-solid fa-triangle-exclamation mr-1"></i> Warning:</span>
                     <p>1. Berkas tidak salah upload. 2. Hasil scan/foto harus jelas. 3. Berkas telah ditandatangani.</p>
                 </div>
             </div>
@@ -471,7 +926,9 @@
         <!-- ================= HALAMAN 5: TPG ================= -->
         <section id="page-tpg" class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 w-full">
             <div class="flex items-center space-x-3 mb-6">
-                <button onclick="navigateTo('page-dashboard')" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
+                <button onclick="navigateTo('page-dashboard')"
+                    class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition-colors"><i
+                        class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="text-2xl font-bold text-[#016b39]">Tunjangan Profesi Guru (TPG)</h2>
             </div>
 
@@ -484,27 +941,195 @@
                     <label class="block text-xs text-gray-500 mb-1">Bulan</label>
                     <select id="tpg-bulan" class="w-full p-2 bg-white rounded-lg text-xs"></select>
                 </div>
-                <div><label class="block text-xs text-gray-500 mb-1">Jenis TPG</label><select id="tpg-jenis" class="w-full p-2 bg-white rounded-lg text-xs"><option>TPG MADRASAH</option><option>TPG PPPK</option><option>TPG PAI</option></select></div>
+                <div><label class="block text-xs text-gray-500 mb-1">Jenis TPG</label><select id="tpg-jenis"
+                        class="w-full p-2 bg-white rounded-lg text-xs">
+                        <option>Madrasah</option>
+                        <option>PPPK</option>
+                        <option>PAI</option>
+                        <option>PAI PPPK</option>
+                    </select></div>
             </div>
 
             <div class="space-y-6">
-                <div class="p-6 border border-gray-200 rounded-2xl bg-gray-50/50 md:flex md:items-center md:justify-between">
+                <div
+                    class="p-6 border border-gray-200 rounded-2xl bg-gray-50/50 md:flex md:items-center md:justify-between">
                     <div>
-                        <span class="block text-sm font-bold text-gray-700 mb-1">Upload Berkas Persyaratan TPG (.pdf)</span>
-                        <input type="file" id="input-berkas-tpg" class="block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
+                        <span class="block text-sm font-bold text-gray-700 mb-1">Upload Berkas Persyaratan TPG
+                            (.pdf)</span>
+                        <input type="file" id="input-berkas-tpg"
+                            class="block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-emerald-50 file:text-[#016b39]">
                     </div>
                     <div class="flex items-center space-x-2 mt-3 md:mt-0">
                         <div id="status-tpg-main" class="min-w-[150px] text-right">
-                            <span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
+                            <span
+                                class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i
+                                    class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>
                         </div>
-                        <button onclick="uploadProses('input-berkas-tpg', 'TPG', 'Upload Berkas Persyaratan', 'status-tpg-main')" class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
+                        <button
+                            onclick="uploadProses('input-berkas-tpg', 'TPG', 'Upload Berkas Persyaratan', 'status-tpg-main')"
+                            class="bg-[#016b39] text-white px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer hover:bg-emerald-800 transition-colors">Upload</button>
                     </div>
                 </div>
 
                 <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-xs text-red-800">
-                    <span class="font-bold uppercase block text-red-600 mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Perhatian Penting:</span>
+                    <span class="font-bold uppercase block text-red-600 mb-1"><i
+                            class="fa-solid fa-triangle-exclamation mr-1"></i> Perhatian Penting:</span>
                     <p>Pastikan berkas telah divalidasi resmi sebelum diunggah ke sistem utama.</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN 6: LOGIN PIMPINAN ================= -->
+        <section id="page-pimpinan-login"
+            class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md mx-auto w-full text-center">
+            <div class="mb-6">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-[#d4af37] to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                    <i class="fa-solid fa-user-shield text-3xl text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-[#016b39]">Dashboard Pimpinan</h2>
+                <p class="text-sm text-gray-500">Masukkan password untuk akses monitoring</p>
+            </div>
+
+            <form onsubmit="handlePimpinanLogin(event);" class="space-y-4">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-key"></i>
+                    </span>
+                    <input type="password" id="pimpinan-pass" placeholder="Password Pimpinan"
+                        class="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#016b39]"
+                        required>
+                    <button type="button" onclick="togglePasswordVisibility('pimpinan-pass', this)"
+                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-[#016b39] cursor-pointer">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit"
+                    class="w-full bg-[#016b39] text-white py-3 rounded-xl font-semibold shadow-md hover:bg-emerald-800 cursor-pointer transition-colors">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk Dashboard
+                </button>
+            </form>
+
+            <div class="mt-4">
+                <button onclick="navigateTo('page-login')"
+                    class="text-sm text-gray-500 hover:text-[#016b39] cursor-pointer transition-colors">
+                    <i class="fa-solid fa-arrow-left mr-1"></i>Kembali ke Login User
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN 7: DASHBOARD PIMPINAN ================= -->
+        <section id="page-pimpinan"
+            class="page bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8 w-full">
+
+            <!-- Header -->
+            <div
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b border-gray-100 gap-3">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-[#d4af37] to-amber-600 text-white rounded-xl flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-[#016b39]">Dashboard Pimpinan</h2>
+                        <p class="text-xs text-gray-500">Monitoring Upload Data Administrasi</p>
+                    </div>
+                </div>
+                <button onclick="logoutPimpinan()"
+                    class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-red-100 transition-colors">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i>Keluar
+                </button>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="bg-gray-50 p-4 rounded-xl mb-6">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Laporan</label>
+                        <select id="pimpinan-jenis" onchange="togglePimpinanFilter()"
+                            class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm">
+                            <option value="Laporan Kinerja">Laporan Kinerja</option>
+                            <option value="TPG">TPG</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tahun</label>
+                        <select id="pimpinan-tahun"
+                            class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
+                    </div>
+                    <div id="pimpinan-bulan-wrapper">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bulan</label>
+                        <select id="pimpinan-bulan"
+                            class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm"></select>
+                    </div>
+                    <div id="pimpinan-semester-wrapper" class="hidden">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Semester</label>
+                        <select id="pimpinan-semester"
+                            class="w-full p-2 bg-white border border-gray-200 rounded-lg text-sm">
+                            <option value="1">Semester 1 (Jan - Jun)</option>
+                            <option value="2">Semester 2 (Jul - Des)</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="loadRekapPimpinan()"
+                    class="w-full sm:w-auto bg-[#016b39] text-white px-6 py-2.5 rounded-xl text-sm font-semibold cursor-pointer hover:bg-emerald-800 transition-colors shadow-md">
+                    <i class="fa-solid fa-magnifying-glass mr-1"></i>Tampilkan Data
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div id="pimpinan-stats" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
+                    <p class="text-2xl font-bold text-blue-700" id="stat-total-user">0</p>
+                    <p class="text-[10px] text-blue-600 font-semibold uppercase tracking-wide">Total User</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
+                    <p class="text-2xl font-bold text-emerald-700" id="stat-selesai">0</p>
+                    <p class="text-[10px] text-emerald-600 font-semibold uppercase tracking-wide">Selesai Upload</p>
+                </div>
+                <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center">
+                    <p class="text-2xl font-bold text-red-700" id="stat-belum">0</p>
+                    <p class="text-[10px] text-red-600 font-semibold uppercase tracking-wide">Belum Lengkap</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
+                    <p class="text-2xl font-bold text-amber-700" id="stat-persen">0%</p>
+                    <p class="text-[10px] text-amber-600 font-semibold uppercase tracking-wide">Persentase</p>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div id="pimpinan-table-wrapper" class="hidden overflow-x-auto rounded-xl border border-gray-200 mb-6"
+                style="max-height: 500px; overflow-y: auto;">
+                <table class="pimpinan-table" id="pimpinan-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>NIP</th>
+                            <th>Sekolah</th>
+                            <th>Status</th>
+                            <th>Berkas Diupload</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pimpinan-table-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Daftar Selesai -->
+            <div id="pimpinan-selesai-wrapper" class="hidden">
+                <h3 class="text-sm font-bold text-emerald-800 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600"></i>Daftar Yang Telah Selesai Upload Lengkap
+                </h3>
+                <div id="pimpinan-selesai-list" class="space-y-2">
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="pimpinan-empty" class="text-center py-12">
+                <i class="fa-solid fa-chart-bar text-6xl text-gray-200 mb-4 block"></i>
+                <p class="text-sm text-gray-400 font-medium">Pilih filter dan klik <strong>"Tampilkan
+                        Data"</strong> untuk melihat rekap upload</p>
             </div>
         </section>
 
@@ -514,7 +1139,8 @@
     <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500 space-y-3">
         <div class="inline-flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-full">
             <i class="fa-brands fa-whatsapp text-emerald-600 text-lg"></i>
-            <span class="text-emerald-800 font-medium">Jika terdapat masalah silahkan klik <a href="https://wa.me/6282187439224" target="_blank" class="font-bold underline">Halo Murni</a></span>
+            <span class="text-emerald-800 font-medium">Jika terdapat masalah silahkan klik <a
+                    href="https://wa.me/6282187439224" target="_blank" class="font-bold underline">Halo Murni</a></span>
         </div>
         <p>&copy; 2026 Copyright by <strong>Murniati Rahmatullah</strong>. All Rights Reserved.</p>
     </footer>
@@ -524,7 +1150,8 @@
         // ==========================================
         //  TAUTKAN URL DEPLOYMENT GOOGLE APPS SCRIPT
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbxS6gvfr2o_vN_Nw6EjA4LsOPXbKe78TGv7byWinMvNd6g1njjJhvRXrPqk6GYSqQjEdg/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbwzSD54LajI--p8egyY7EaPE5caZQUrYJhK2TI3FgHyZmQH2L1X0uYTMrb8mXDOy4MHgw/exec";
+
 
         // Global State
         let currentUser = null;
@@ -540,14 +1167,14 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
-            
+
             const iconMap = {
                 success: 'fa-circle-check',
                 error: 'fa-circle-xmark',
                 warning: 'fa-triangle-exclamation',
                 info: 'fa-circle-info'
             };
-            
+
             toast.innerHTML = `
                 <i class="fa-solid ${iconMap[type] || iconMap.info}"></i>
                 <span class="toast-msg">${message}</span>
@@ -555,9 +1182,9 @@
                     <i class="fa-solid fa-xmark"></i>
                 </span>
             `;
-            
+
             container.appendChild(toast);
-            
+
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.classList.add('toast-exit');
@@ -597,7 +1224,7 @@
         function toggleLoader(show, text = "") {
             const overlay = document.getElementById('loading-overlay');
             document.getElementById('loading-text').innerText = text;
-            if(show) overlay.classList.remove('hidden');
+            if (show) overlay.classList.remove('hidden');
             else overlay.classList.add('hidden');
         }
 
@@ -680,7 +1307,7 @@
             if (startDow < 0) startDow = 6;
 
             const today = new Date();
-            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
             // Collect upload dates from history
             const uploadDates = new Set();
@@ -706,9 +1333,9 @@
             // Day cells
             for (let d = 1; d <= daysInMonth; d++) {
                 const cell = document.createElement('div');
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const dateObj = new Date(year, month, d);
-                
+
                 let classes = 'cal-day';
                 const isToday = dateStr === todayStr;
                 const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -729,9 +1356,10 @@
 
                 cell.className = classes;
                 cell.innerHTML = `<span>${d}</span>${hasUpload ? '<span class="cal-check"><i class="fa-solid fa-check"></i></span>' : ''}`;
-                
+
                 if (hasUpload) {
-                    cell.title = `Upload berhasil pada ${d} ${BULAN_LIST[month]} ${year}`;
+                    cell.title = `Klik untuk melihat detail upload`;
+                    cell.onclick = (function (ds) { return function () { showCalendarDetail(ds); }; })(dateStr);
                 }
 
                 grid.appendChild(cell);
@@ -760,13 +1388,13 @@
         // ==========================================
         async function startCamera() {
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { width: 400, height: 300, facingMode: "user" }, 
-                    audio: false 
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 400, height: 300, facingMode: "user" },
+                    audio: false
                 });
                 const videoElement = document.getElementById('webcam-stream');
                 videoElement.srcObject = localStream;
-                
+
                 document.getElementById('camera-box').classList.remove('hidden');
                 document.getElementById('preview-box').classList.add('hidden');
                 document.getElementById('btn-capture-photo').classList.remove('hidden');
@@ -785,13 +1413,13 @@
             if (localStream) {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
-                
+
                 // Efek Mirroring Wajah agar natural
                 context.translate(canvas.width, 0);
                 context.scale(-1, 1);
-                
+
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
+
                 // Ambil base64 string gambar
                 const base64Photo = canvas.toDataURL('image/jpeg');
                 document.getElementById('reg-foto-wajah').value = base64Photo;
@@ -799,7 +1427,7 @@
                 // Tampilkan hasil foto ke layar pratinjau
                 document.getElementById('face-photo-preview').src = base64Photo;
                 document.getElementById('preview-box').classList.remove('hidden');
-                
+
                 // Matikan kamera setelah diambil gambarnya
                 stopCamera();
                 document.getElementById('camera-box').classList.add('hidden');
@@ -912,16 +1540,20 @@
                 if (result.status === "SUCCESS") {
                     currentUser = result.user;
                     document.getElementById('txt-welcome-user').innerText = `Hallo ${currentUser.nama} (NIP: ${currentUser.nip})`;
-                    
+
                     // Store history and render
                     userUploadHistory = result.history || [];
                     renderHistoryStatus(userUploadHistory);
-                    
+
+                    // Simpan sesi login ke sessionStorage agar tidak hilang saat refresh
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    sessionStorage.setItem('userUploadHistory', JSON.stringify(userUploadHistory));
+
                     // Reset calendar to current month
                     calendarYear = new Date().getFullYear();
                     calendarMonth = new Date().getMonth();
                     renderCalendar();
-                    
+
                     showToast(`Selamat datang, ${currentUser.nama}!`, 'success');
                     navigateTo('page-dashboard');
                 } else {
@@ -948,7 +1580,7 @@
                 'Berkas Persyaratan TPG': 'status-tpg-main'
             };
 
-            if(historyList && Array.isArray(historyList)) {
+            if (historyList && Array.isArray(historyList)) {
                 historyList.forEach(item => {
                     let elementId = mapping[item.namaBerkas];
                     if (!elementId && item.namaBerkas) {
@@ -968,7 +1600,12 @@
 
         // ==========================================
         //  UPLOAD FILE BASE64 KE GDRIVE & SHEET
+        //  Dengan konfirmasi preview sebelum upload
         // ==========================================
+
+        // State sementara untuk proses upload
+        let pendingUpload = null;
+
         function uploadProses(inputId, layanan, berkasType, statusDivId) {
             if (!currentUser) {
                 showToast('Sesi login Anda habis, silahkan login kembali.', 'warning');
@@ -990,13 +1627,93 @@
                 return;
             }
 
+            // Simpan data upload sementara
+            pendingUpload = { inputId, layanan, berkasType, statusDivId, file };
+
+            // Tampilkan modal konfirmasi dengan preview
+            showConfirmModal(file, berkasType, layanan);
+        }
+
+        function showConfirmModal(file, berkasType, layanan) {
+            const modal = document.getElementById('confirm-upload-modal');
+
+            // Isi info file
+            document.getElementById('confirm-file-name').textContent = file.name;
+            document.getElementById('confirm-file-size').textContent = formatFileSize(file.size);
+            document.getElementById('confirm-file-type').textContent = file.type || 'Tidak diketahui';
+            document.getElementById('confirm-berkas-type').textContent = berkasType + (layanan === 'TPG' ? ' (' + (document.getElementById('tpg-jenis')?.value || '') + ')' : '');
+
+            // Reset checklist
+            document.getElementById('chk-ttd').checked = false;
+            document.getElementById('chk-file-type').checked = false;
+            document.getElementById('btn-confirm-upload').disabled = true;
+
+            // Render preview berdasarkan tipe file
+            const previewContainer = document.getElementById('confirm-preview-container');
+            const fileURL = URL.createObjectURL(file);
+
+            if (file.type === 'application/pdf') {
+                previewContainer.innerHTML = `<iframe src="${fileURL}#toolbar=0" title="Preview PDF"></iframe>`;
+            } else if (file.type.startsWith('image/')) {
+                previewContainer.innerHTML = `<img src="${fileURL}" alt="Preview Gambar">`;
+            } else {
+                // File lain yang tidak bisa di-preview
+                const ext = file.name.split('.').pop().toUpperCase();
+                previewContainer.innerHTML = `
+                    <div class="text-center p-6">
+                        <i class="fa-solid fa-file-lines text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-sm text-gray-500 font-semibold">${file.name}</p>
+                        <p class="text-xs text-gray-400 mt-1">Tipe file .${ext} tidak dapat ditampilkan pratinjau.<br>Pastikan file sudah benar sebelum mengirim.</p>
+                    </div>`;
+            }
+
+            // Tampilkan modal
+            modal.classList.add('show');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-upload-modal');
+            modal.classList.remove('show');
+
+            // Bersihkan preview (revoke blob URL)
+            const previewContainer = document.getElementById('confirm-preview-container');
+            const iframe = previewContainer.querySelector('iframe');
+            const img = previewContainer.querySelector('img');
+            if (iframe) URL.revokeObjectURL(iframe.src);
+            if (img) URL.revokeObjectURL(img.src);
+            previewContainer.innerHTML = `<p class="text-sm text-gray-400"><i class="fa-solid fa-file-circle-question mr-1"></i>Tidak dapat ditampilkan</p>`;
+
+            pendingUpload = null;
+        }
+
+        function updateConfirmBtn() {
+            const chk1 = document.getElementById('chk-ttd').checked;
+            const chk2 = document.getElementById('chk-file-type').checked;
+            document.getElementById('btn-confirm-upload').disabled = !(chk1 && chk2);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        // Eksekusi upload setelah user konfirmasi
+        function executeUpload() {
+            if (!pendingUpload) return;
+
+            const { inputId, layanan, berkasType, statusDivId, file } = pendingUpload;
+
+            // Tutup modal
+            closeConfirmModal();
+
             const reader = new FileReader();
-            
+
             toggleLoader(true, `Mengirim file "${file.name}" ke Google Drive Anda...`);
 
-            reader.onload = async function(e) {
+            reader.onload = async function (e) {
                 const fileData = e.target.result;
-                
+
                 const payload = {
                     action: 'upload',
                     sheetName: currentUser.sheetName,
@@ -1018,12 +1735,12 @@
 
                     if (result.status === "SUCCESS") {
                         showToast(`Berkas "${berkasType}" berhasil disimpan di Google Drive.`, 'success');
-                        
+
                         document.getElementById(statusDivId).innerHTML = `
                             <span class="inline-block text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
                                 <i class="fa-solid fa-circle-check mr-1"></i>Sudah Diunggah (<a href="${result.fileUrl}" target="_blank" class="underline font-medium text-blue-600">Lihat Berkas</a>)
                             </span>`;
-                        
+
                         // Add to local history for calendar
                         const uploadDate = result.tanggal || new Date().toISOString().split('T')[0];
                         userUploadHistory.push({
@@ -1033,12 +1750,15 @@
                             link: result.fileUrl,
                             status: 'Sukses'
                         });
-                        
+
+                        // Update sessionStorage dengan history terbaru
+                        sessionStorage.setItem('userUploadHistory', JSON.stringify(userUploadHistory));
+
                         // Re-render calendar to show new upload
                         renderCalendar();
-                        
+
                         // Clear file input
-                        fileInput.value = '';
+                        document.getElementById(inputId).value = '';
                     } else {
                         showToast('Gagal Upload: ' + (result.message || 'Terjadi kesalahan.'), 'error');
                     }
@@ -1059,13 +1779,18 @@
         function logout() {
             currentUser = null;
             userUploadHistory = [];
+
+            // Hapus sesi login dari sessionStorage
+            sessionStorage.removeItem('currentUser');
+            sessionStorage.removeItem('userUploadHistory');
+
             document.getElementById('page-login').querySelector('form').reset();
-            
+
             const statusIds = ['status-lapor-harian', 'status-lapor-bulanan', 'status-rencana-bulan', 'status-absensi', 'status-tpg-main'];
             statusIds.forEach(id => {
                 document.getElementById(id).innerHTML = `<span class="inline-block text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Dikirim</span>`;
             });
-            
+
             // Reset calendar
             calendarYear = new Date().getFullYear();
             calendarMonth = new Date().getMonth();
@@ -1090,17 +1815,340 @@
         }
 
         // ==========================================
+        //  KALENDER DETAIL MODAL
+        // ==========================================
+        function showCalendarDetail(dateStr) {
+            const parts = dateStr.split('-');
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1;
+            const day = parseInt(parts[2]);
+
+            const displayDate = `${day} ${BULAN_LIST[month]} ${year}`;
+
+            // Filter uploads for this date
+            const uploads = userUploadHistory.filter(item => {
+                if (item.tanggal) {
+                    return item.tanggal.toString().substring(0, 10) === dateStr;
+                }
+                return false;
+            });
+
+            document.getElementById('cal-detail-date').textContent = displayDate;
+
+            const listEl = document.getElementById('cal-detail-list');
+
+            if (uploads.length === 0) {
+                listEl.innerHTML = '<p class="text-center text-gray-400 text-sm py-4"><i class="fa-solid fa-inbox mr-1"></i>Tidak ada upload pada tanggal ini</p>';
+            } else {
+                let html = '';
+                uploads.forEach(item => {
+                    const iconMap = { 'Laporan Kinerja': 'fa-file-invoice', 'TPG': 'fa-graduation-cap' };
+                    const colorMap = { 'Laporan Kinerja': 'text-amber-600 bg-amber-100', 'TPG': 'text-emerald-600 bg-emerald-100' };
+                    const icon = iconMap[item.layanan] || 'fa-file';
+                    const color = colorMap[item.layanan] || 'text-blue-600 bg-blue-100';
+                    const timeStr = item.tanggal && item.tanggal.length > 10 ? item.tanggal.substring(11, 16) : '';
+
+                    html += `
+                        <div class="cal-detail-item">
+                            <div class="w-9 h-9 ${color} rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid ${icon}"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-gray-800 truncate">${item.namaBerkas || 'Berkas'}</p>
+                                <p class="text-[11px] text-gray-500">${item.layanan || ''}${timeStr ? ' &bull; ' + timeStr : ''}</p>
+                            </div>
+                            <a href="${item.link}" target="_blank"
+                                class="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-400 transition-colors flex-shrink-0 no-underline">
+                                <i class="fa-solid fa-eye"></i> Lihat
+                            </a>
+                        </div>`;
+                });
+                listEl.innerHTML = html;
+            }
+
+            document.getElementById('calendar-detail-modal').classList.add('show');
+        }
+
+        function closeCalendarDetail() {
+            document.getElementById('calendar-detail-modal').classList.remove('show');
+        }
+
+        // ==========================================
+        //  PIMPINAN DASHBOARD
+        // ==========================================
+        async function handlePimpinanLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('pimpinan-pass').value;
+
+            toggleLoader(true, "Memverifikasi akses Pimpinan...");
+
+            try {
+                const result = await apiFetch({ action: 'loginPimpinan', password: pass });
+
+                if (result.status === "SUCCESS") {
+                    sessionStorage.setItem('isPimpinan', 'true');
+                    showToast('Selamat datang, Pimpinan!', 'success');
+                    populatePimpinanDropdowns();
+                    navigateTo('page-pimpinan');
+                } else {
+                    showToast(result.message || 'Password pimpinan salah!', 'error');
+                }
+            } catch (error) {
+                showToast('Gagal menghubungi server.', 'error');
+                console.error(error);
+            }
+            toggleLoader(false);
+        }
+
+        function populatePimpinanDropdowns() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            const yearSel = document.getElementById('pimpinan-tahun');
+            yearSel.innerHTML = '';
+            for (let y = currentYear - 2; y <= currentYear + 1; y++) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                if (y === currentYear) opt.selected = true;
+                yearSel.appendChild(opt);
+            }
+
+            const monthSel = document.getElementById('pimpinan-bulan');
+            monthSel.innerHTML = '';
+            BULAN_LIST.forEach((name, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = name;
+                if (idx === currentMonth) opt.selected = true;
+                monthSel.appendChild(opt);
+            });
+
+            const semesterSel = document.getElementById('pimpinan-semester');
+            semesterSel.value = currentMonth < 6 ? '1' : '2';
+        }
+
+        function togglePimpinanFilter() {
+            const jenis = document.getElementById('pimpinan-jenis').value;
+            if (jenis === 'TPG') {
+                document.getElementById('pimpinan-bulan-wrapper').classList.add('hidden');
+                document.getElementById('pimpinan-semester-wrapper').classList.remove('hidden');
+            } else {
+                document.getElementById('pimpinan-bulan-wrapper').classList.remove('hidden');
+                document.getElementById('pimpinan-semester-wrapper').classList.add('hidden');
+            }
+        }
+
+        async function loadRekapPimpinan() {
+            const jenis = document.getElementById('pimpinan-jenis').value;
+            const tahun = parseInt(document.getElementById('pimpinan-tahun').value);
+
+            let bulanAwal, bulanAkhir;
+            if (jenis === 'TPG') {
+                const semester = document.getElementById('pimpinan-semester').value;
+                bulanAwal = semester === '1' ? 0 : 6;
+                bulanAkhir = semester === '1' ? 5 : 11;
+            } else {
+                const bulan = parseInt(document.getElementById('pimpinan-bulan').value);
+                bulanAwal = bulan;
+                bulanAkhir = bulan;
+            }
+
+            toggleLoader(true, "Memuat data rekap dari seluruh user...");
+
+            try {
+                const result = await apiFetch({
+                    action: 'getRekapPimpinan',
+                    jenis: jenis,
+                    tahun: tahun,
+                    bulanAwal: bulanAwal,
+                    bulanAkhir: bulanAkhir
+                });
+
+                if (result.status === "SUCCESS") {
+                    renderRekapPimpinan(result.data, jenis);
+                } else {
+                    showToast(result.message || 'Gagal memuat data.', 'error');
+                }
+            } catch (error) {
+                showToast('Gagal menghubungi server.', 'error');
+                console.error(error);
+            }
+            toggleLoader(false);
+        }
+
+        function extractDriveId(url) {
+            if (!url) return '';
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            return match ? match[1] : '';
+        }
+
+        function renderRekapPimpinan(data, jenis) {
+            document.getElementById('pimpinan-empty').classList.add('hidden');
+            document.getElementById('pimpinan-stats').classList.remove('hidden');
+            document.getElementById('pimpinan-table-wrapper').classList.remove('hidden');
+            document.getElementById('pimpinan-selesai-wrapper').classList.remove('hidden');
+
+            const requiredBerkas = jenis === 'Laporan Kinerja'
+                ? ['Laporan Kinerja Harian', 'Laporan Kinerja Bulanan', 'Rencana Kinerja Bulanan', 'Laporan Absensi Bulanan']
+                : ['Upload Berkas Persyaratan'];
+
+            let totalSelesai = 0;
+            let selesaiList = [];
+
+            const tbody = document.getElementById('pimpinan-table-body');
+            tbody.innerHTML = '';
+
+            data.forEach((user, idx) => {
+                const uploadedTypes = new Set();
+                if (user.uploads) {
+                    user.uploads.forEach(u => {
+                        let nama = u.namaBerkas || '';
+                        if (nama.includes('Upload Berkas Persyaratan')) nama = 'Upload Berkas Persyaratan';
+                        uploadedTypes.add(nama);
+                    });
+                }
+
+                const isComplete = requiredBerkas.every(b => uploadedTypes.has(b));
+                if (isComplete) {
+                    totalSelesai++;
+                    selesaiList.push(user);
+                }
+
+                // Build berkas links
+                let berkasHtml = '';
+                if (user.uploads && user.uploads.length > 0) {
+                    user.uploads.forEach(u => {
+                        const driveId = extractDriveId(u.link);
+                        const downloadUrl = driveId ? `https://drive.google.com/uc?export=download&id=${driveId}` : u.link;
+                        berkasHtml += `
+                            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                                <span class="inline-block text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">${u.namaBerkas || 'Berkas'}</span>
+                                <a href="${u.link}" target="_blank" class="text-[10px] text-blue-600 hover:text-blue-800 underline flex items-center gap-0.5">
+                                    <i class="fa-solid fa-eye"></i> Lihat
+                                </a>
+                                <a href="${downloadUrl}" target="_blank" class="text-[10px] text-purple-600 hover:text-purple-800 underline flex items-center gap-0.5">
+                                    <i class="fa-solid fa-download"></i> Download
+                                </a>
+                                <span class="text-[9px] text-gray-400">${u.tanggal ? u.tanggal.substring(0, 10) : ''}</span>
+                            </div>`;
+                    });
+                } else {
+                    berkasHtml = '<span class="text-[10px] text-gray-400 italic">Belum ada upload</span>';
+                }
+
+                const statusHtml = isComplete
+                    ? '<span class="inline-block text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full"><i class="fa-solid fa-circle-check mr-1"></i>Lengkap</span>'
+                    : '<span class="inline-block text-[10px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full"><i class="fa-solid fa-circle-xmark mr-1"></i>Belum Lengkap</span>';
+
+                const fotoThumb = user.fotoUrl && user.fotoUrl !== 'Tidak ada foto'
+                    ? `<a href="${user.fotoUrl}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extractDriveId(user.fotoUrl)}&sz=w40" class="w-7 h-7 rounded-full object-cover border border-gray-200" onerror="this.style.display='none'"></a>`
+                    : '';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="text-center font-semibold text-gray-500">${idx + 1}</td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            ${fotoThumb}
+                            <span class="font-semibold text-gray-800">${user.nama}</span>
+                        </div>
+                    </td>
+                    <td class="text-gray-600 font-mono text-[11px]">${user.nip}</td>
+                    <td class="text-gray-600">${user.sekolah || '-'}</td>
+                    <td>${statusHtml}</td>
+                    <td>${berkasHtml}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update stats
+            document.getElementById('stat-total-user').textContent = data.length;
+            document.getElementById('stat-selesai').textContent = totalSelesai;
+            document.getElementById('stat-belum').textContent = data.length - totalSelesai;
+            document.getElementById('stat-persen').textContent = data.length > 0 ? Math.round((totalSelesai / data.length) * 100) + '%' : '0%';
+
+            // Render selesai list
+            const selesaiContainer = document.getElementById('pimpinan-selesai-list');
+            if (selesaiList.length > 0) {
+                selesaiContainer.innerHTML = selesaiList.map((u, i) => `
+                    <div class="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                        <div class="w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">${i + 1}</div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold text-emerald-800">${u.nama}</p>
+                            <p class="text-[10px] text-emerald-600">NIP: ${u.nip} &bull; ${u.sekolah || '-'}</p>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                    </div>
+                `).join('');
+            } else {
+                selesaiContainer.innerHTML = '<p class="text-sm text-gray-400 text-center py-4"><i class="fa-solid fa-inbox mr-1"></i>Belum ada yang menyelesaikan seluruh upload</p>';
+            }
+        }
+
+        function logoutPimpinan() {
+            sessionStorage.removeItem('isPimpinan');
+            document.getElementById('pimpinan-stats').classList.add('hidden');
+            document.getElementById('pimpinan-table-wrapper').classList.add('hidden');
+            document.getElementById('pimpinan-selesai-wrapper').classList.add('hidden');
+            document.getElementById('pimpinan-empty').classList.remove('hidden');
+            showToast('Anda telah keluar dari Dashboard Pimpinan.', 'info');
+            navigateTo('page-login');
+        }
+
+        // ==========================================
         //  INISIALISASI HALAMAN
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             populateDropdowns();
-            renderCalendar();
 
-            // Make sure first page is visible immediately
-            const loginPage = document.getElementById('page-login');
-            loginPage.style.opacity = '1';
-            loginPage.style.transform = 'translateY(0)';
+            // Cek apakah ada sesi login yang tersimpan di sessionStorage
+            const savedUser = sessionStorage.getItem('currentUser');
+            const savedHistory = sessionStorage.getItem('userUploadHistory');
+
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    userUploadHistory = savedHistory ? JSON.parse(savedHistory) : [];
+
+                    // Restore tampilan dashboard
+                    document.getElementById('txt-welcome-user').innerText = `Hallo ${currentUser.nama} (NIP: ${currentUser.nip})`;
+                    renderHistoryStatus(userUploadHistory);
+
+                    // Reset calendar to current month
+                    calendarYear = new Date().getFullYear();
+                    calendarMonth = new Date().getMonth();
+                    renderCalendar();
+
+                    // Langsung arahkan ke dashboard
+                    navigateTo('page-dashboard');
+                } catch (e) {
+                    // Jika data sessionStorage rusak, hapus dan tampilkan login
+                    sessionStorage.removeItem('currentUser');
+                    sessionStorage.removeItem('userUploadHistory');
+                    renderCalendar();
+
+                    const loginPage = document.getElementById('page-login');
+                    loginPage.style.opacity = '1';
+                    loginPage.style.transform = 'translateY(0)';
+                }
+            } else {
+                // Check pimpinan session
+                const isPimpinan = sessionStorage.getItem('isPimpinan');
+                if (isPimpinan === 'true') {
+                    populatePimpinanDropdowns();
+                    navigateTo('page-pimpinan');
+                } else {
+                    renderCalendar();
+                    // Make sure first page is visible immediately
+                    const loginPage = document.getElementById('page-login');
+                    loginPage.style.opacity = '1';
+                    loginPage.style.transform = 'translateY(0)';
+                }
+            }
         });
     </script>
 </body>
+
 </html>

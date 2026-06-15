@@ -4,10 +4,6 @@
 // ==========================================
 const MAIN_FOLDER_ID = "1db6W-oWkpu51jZS8kupUF6mGTbfHUYiO";
 
-// Password master untuk akses Dashboard Pimpinan
-// GANTI password ini sesuai kebutuhan
-const PIMPINAN_PASSWORD = "admin2026";
-
 // ==========================================
 //  ENDPOINT HANDLER
 // ==========================================
@@ -39,10 +35,6 @@ function doPost(e) {
     return handleFileUpload(data);
   } else if (action === 'getHistory') {
     return handleGetHistory(data);
-  } else if (action === 'loginPimpinan') {
-    return handleLoginPimpinan(data);
-  } else if (action === 'getRekapPimpinan') {
-    return handleGetRekapPimpinan(data);
   }
 
   return createResponse({ status: "FAILED", message: "Aksi tidak dikenali" });
@@ -420,102 +412,4 @@ function getMainFolder() {
 
 function getFormattedDateOnly() {
   return Utilities.formatDate(new Date(), "GMT+8", "yyyy-MM-dd");
-}
-
-// ==========================================
-//  5. FUNGSI LOGIN PIMPINAN (PASSWORD MASTER)
-// ==========================================
-function handleLoginPimpinan(data) {
-  var inputPass = data.password ? data.password.toString().trim() : "";
-
-  if (inputPass === PIMPINAN_PASSWORD) {
-    return createResponse({ status: "SUCCESS", message: "Login Pimpinan berhasil" });
-  }
-
-  return createResponse({ status: "FAILED", message: "Password Pimpinan salah!" });
-}
-
-// ==========================================
-//  6. FUNGSI REKAP PIMPINAN (ALL USERS DATA)
-// ==========================================
-function handleGetRekapPimpinan(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var userSheet = ss.getSheetByName("Users");
-
-  if (!userSheet) {
-    return createResponse({ status: "SUCCESS", data: [] });
-  }
-
-  var jenis = data.jenis; // "Laporan Kinerja" or "TPG"
-  var tahun = parseInt(data.tahun);
-  var bulanAwal = parseInt(data.bulanAwal); // 0-indexed
-  var bulanAkhir = parseInt(data.bulanAkhir); // 0-indexed
-
-  // Build date range for filtering
-  var startDate = new Date(tahun, bulanAwal, 1);
-  var endDate = new Date(tahun, bulanAkhir + 1, 0, 23, 59, 59);
-
-  var users = userSheet.getDataRange().getValues();
-  var result = [];
-
-  for (var i = 1; i < users.length; i++) {
-    var nama = users[i][1];
-    var nip = users[i][4];
-    if (typeof nip === 'number') {
-      nip = nip.toFixed(0);
-    } else {
-      nip = nip.toString().trim();
-    }
-
-    var sekolah = users[i][10] || "";
-    var sheetName = users[i][6];
-    var fotoUrl = users[i][7] || "";
-
-    var uploads = [];
-
-    var personalSheet = ss.getSheetByName(sheetName);
-    if (personalSheet && personalSheet.getLastRow() > 1) {
-      var pRows = personalSheet.getDataRange().getValues();
-      for (var j = 1; j < pRows.length; j++) {
-        // Check if layanan matches
-        var layanan = pRows[j][1] ? pRows[j][1].toString() : "";
-        if (layanan !== jenis) continue;
-
-        // Parse and filter by date
-        var uploadDate;
-        if (pRows[j][0] instanceof Date) {
-          uploadDate = pRows[j][0];
-        } else {
-          uploadDate = new Date(pRows[j][0].toString());
-        }
-
-        if (isNaN(uploadDate.getTime())) continue;
-        if (uploadDate < startDate || uploadDate > endDate) continue;
-
-        var tanggalStr = "";
-        if (pRows[j][0] instanceof Date) {
-          tanggalStr = Utilities.formatDate(pRows[j][0], "GMT+8", "yyyy-MM-dd HH:mm:ss");
-        } else {
-          tanggalStr = pRows[j][0].toString();
-        }
-
-        uploads.push({
-          tanggal: tanggalStr,
-          namaBerkas: pRows[j][2] ? pRows[j][2].toString() : "",
-          link: pRows[j][3] ? pRows[j][3].toString() : "",
-          status: pRows[j][4] ? pRows[j][4].toString() : ""
-        });
-      }
-    }
-
-    result.push({
-      nama: nama,
-      nip: nip,
-      sekolah: sekolah,
-      fotoUrl: fotoUrl,
-      uploads: uploads
-    });
-  }
-
-  return createResponse({ status: "SUCCESS", data: result });
 }
